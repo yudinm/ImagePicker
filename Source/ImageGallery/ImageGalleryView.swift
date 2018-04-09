@@ -29,7 +29,7 @@ open class ImageGalleryView: UIView {
 
   lazy open var collectionView: UICollectionView = { [unowned self] in
     let collectionView = UICollectionView(frame: CGRect.zero,
-      collectionViewLayout: self.collectionViewLayout)
+                                          collectionViewLayout: self.collectionViewLayout)
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     collectionView.backgroundColor = self.configuration.mainColor
     collectionView.showsHorizontalScrollIndicator = false
@@ -134,7 +134,7 @@ open class ImageGalleryView: UIView {
     topSeparator.frame = CGRect(x: 0, y: 0, width: totalWidth, height: Dimensions.galleryBarHeight)
     topSeparator.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleWidth]
     configuration.indicatorView.frame = CGRect(x: (totalWidth - configuration.indicatorWidth) / 2, y: (topSeparator.frame.height - configuration.indicatorHeight) / 2,
-      width: configuration.indicatorWidth, height: configuration.indicatorHeight)
+                                               width: configuration.indicatorWidth, height: configuration.indicatorHeight)
     collectionView.frame = CGRect(x: 0, y: topSeparator.frame.height, width: totalWidth, height: collectionFrame - topSeparator.frame.height)
     collectionSize = CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
     noImagesLabel.center = CGPoint(x: bounds.width / 2, y: (bounds.height + Dimensions.galleryBarHeight) / 2)
@@ -200,9 +200,9 @@ extension ImageGalleryView: UICollectionViewDelegateFlowLayout {
   public func collectionView(_ collectionView: UICollectionView,
                              layout collectionViewLayout: UICollectionViewLayout,
                              sizeForItemAt indexPath: IndexPath) -> CGSize {
-      guard let collectionSize = collectionSize else { return CGSize.zero }
+    guard let collectionSize = collectionSize else { return CGSize.zero }
 
-      return collectionSize
+    return collectionSize
   }
 }
 
@@ -237,8 +237,8 @@ extension ImageGalleryView: UICollectionViewDelegate {
       if cell.selectedImageView.image != nil {
         UIView.animate(withDuration: 0.2, animations: {
           cell.selectedImageView.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-          }, completion: { _ in
-            cell.selectedImageView.image = nil
+        }, completion: { _ in
+          cell.selectedImageView.image = nil
         })
         self.selectedStack.dropAsset(asset)
       } else if self.imageLimit == 0 || self.imageLimit > self.selectedStack.assets.count {

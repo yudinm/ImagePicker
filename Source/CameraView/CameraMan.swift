@@ -6,9 +6,10 @@ protocol CameraManDelegate: class {
   func cameraManNotAvailable(_ cameraMan: CameraMan)
   func cameraManDidStart(_ cameraMan: CameraMan)
   func cameraMan(_ cameraMan: CameraMan, didChangeInput input: AVCaptureDeviceInput)
+  func videoToLibrary()
 }
 
-class CameraMan {
+class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
   weak var delegate: CameraManDelegate?
 
   let session = AVCaptureSession()
@@ -16,8 +17,23 @@ class CameraMan {
 
   var backCamera: AVCaptureDeviceInput?
   var frontCamera: AVCaptureDeviceInput?
+  var microphone: AVCaptureDeviceInput?
   var stillImageOutput: AVCaptureStillImageOutput?
+  var movieFileOutput: AVCaptureMovieFileOutput?
   var startOnFrontCamera: Bool = false
+  var recordingURL: URL?
+  var isVideoCapturing: Bool = false {
+    didSet {
+
+      queue.async {
+        if (self.isVideoCapturing) {
+          self.startVideoCapturing()
+          return
+        }
+        self.startPhotoCapturing()
+      }
+    }
+  }
 
   deinit {
     stop()
@@ -33,23 +49,47 @@ class CameraMan {
   func setupDevices() {
     // Input
     AVCaptureDevice
-    .devices()
-    .filter {
-      return $0.hasMediaType(AVMediaType.video)
-    }.forEach {
-      switch $0.position {
-      case .front:
-        self.frontCamera = try? AVCaptureDeviceInput(device: $0)
-      case .back:
-        self.backCamera = try? AVCaptureDeviceInput(device: $0)
-      default:
-        break
-      }
+      .devices()
+      .filter {
+        return $0.hasMediaType(AVMediaType.video)
+      }.forEach {
+        switch $0.position {
+        case .front:
+          self.frontCamera = try? AVCaptureDeviceInput(device: $0)
+        case .back:
+          self.backCamera = try? AVCaptureDeviceInput(device: $0)
+        default:
+          break
+        }
+    }
+
+    let deviceMicrophone =
+      AVCaptureDevice
+        .devices()
+        .filter {
+          return $0.hasMediaType(AVMediaType.audio)
+        }.first
+    do {
+      try self.microphone = AVCaptureDeviceInput(device: deviceMicrophone!)
+    } catch {
+      print("\(error.localizedDescription)")
     }
 
     // Output
     stillImageOutput = AVCaptureStillImageOutput()
     stillImageOutput?.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+    // Output Video File
+    movieFileOutput = AVCaptureMovieFileOutput()
+
+    recordingURL = URL(fileURLWithPath: NSString.path(withComponents: [NSTemporaryDirectory(), "Movie.MOV"]))
+    var error:NSError? = nil
+    do {
+      try FileManager.default.removeItem(at: self.recordingURL!)
+    } catch {
+      print("\(error.localizedDescription)")
+    }
+
+
   }
 
   func addInput(_ input: AVCaptureDeviceInput) {
@@ -101,20 +141,48 @@ class CameraMan {
     // Devices
     setupDevices()
 
-    guard let input = (self.startOnFrontCamera) ? frontCamera ?? backCamera : backCamera, let output = stillImageOutput else { return }
-
-    addInput(input)
-
-    if session.canAddOutput(output) {
-      session.addOutput(output)
+    guard let inputVideo = (self.startOnFrontCamera) ? frontCamera ?? backCamera : backCamera else { return }
+    addInput(inputVideo)
+    if let inputAudio = self.microphone {
+      addInput(inputAudio)
     }
 
+    startPhotoCapturing()
+
     queue.async {
+
       self.session.startRunning()
 
       DispatchQueue.main.async {
         self.delegate?.cameraManDidStart(self)
       }
+    }
+
+  }
+
+  func startVideoCapturing() {
+    guard let movieFileOutput = movieFileOutput else { return }
+    session.outputs.map { output in session.removeOutput(output) }
+    if session.canAddOutput(movieFileOutput) {
+      session.addOutput(movieFileOutput)
+    }
+    recordingURL = URL(fileURLWithPath: NSString.path(withComponents: [NSTemporaryDirectory(), "Movie.MOV"]))
+    //    queue.async {
+    ////      self.session.stopRunning()
+    //      self.session.startRunning()
+    //
+    //      DispatchQueue.main.async {
+    //        self.delegate?.cameraManDidStart(self)
+    //      }
+    //    }
+  }
+
+  func startPhotoCapturing() {
+    guard let output = stillImageOutput else { return }
+
+    session.outputs.map { output in session.removeOutput(output) }
+    if session.canAddOutput(output) {
+      session.addOutput(output)
     }
   }
 
@@ -176,10 +244,67 @@ class CameraMan {
       let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
       request.creationDate = Date()
       request.location = location
-      }, completionHandler: { (_, _) in
-        DispatchQueue.main.async {
-          completion?()
-        }
+    }, completionHandler: { (_, _) in
+      DispatchQueue.main.async {
+        completion?()
+      }
+    })
+  }
+
+  func startTakingVideo(_ previewLayer: AVCaptureVideoPreviewLayer, location: CLLocation?) {
+    guard let connection = movieFileOutput?.connection(with: AVMediaType.video) else { return }
+
+    connection.videoOrientation = Helper.videoOrientation()
+
+
+    queue.async {
+      //            if (self.session.canAdd(connection)) {
+      //                self.session.addOutput(self.videoDataOutput!)
+      //            }
+      guard let movieFileOutput = self.movieFileOutput else { return }
+      guard let recordingURL = self.recordingURL else { return }
+      var error:NSError? = nil
+      do {
+        try FileManager.default.removeItem(at: self.recordingURL!)
+      } catch {
+        print("\(error.localizedDescription)")
+      }
+      movieFileOutput.startRecording(to: recordingURL, recordingDelegate: self)
+      //      if let completion = completion { completion() }
+      //
+      //            self.queue.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 10), execute: {
+      //                self.session.stopRunning()
+      //                self.saveVideo(completion)
+      //            })
+
+    }
+  }
+
+  func stopTakingVideo() {
+    queue.async {
+      guard let movieFileOutput = self.movieFileOutput else { return }
+      movieFileOutput.stopRecording()
+    }
+  }
+
+  // MARK: - AVCaptureFileOutputRecordingDelegate
+  func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+    if let error = error {
+      print("\(error.localizedDescription)")
+      return
+    }
+
+    PHPhotoLibrary.shared().performChanges({
+      let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
+      request?.creationDate = Date()
+    }, completionHandler: { (_,error) in
+      if let error = error {
+        print("\(error.localizedDescription)")
+        return
+      }
+      DispatchQueue.main.async {
+        self.delegate?.videoToLibrary()
+      }
     })
   }
 
@@ -198,7 +323,10 @@ class CameraMan {
 
     queue.async {
       self.lock {
+        device.focusMode = AVCaptureDevice.FocusMode.autoFocus
+        device.exposureMode = AVCaptureDevice.ExposureMode.autoExpose
         device.focusPointOfInterest = point
+        device.exposurePointOfInterest = point
       }
     }
   }

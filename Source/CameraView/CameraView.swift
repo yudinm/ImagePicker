@@ -6,7 +6,9 @@ protocol CameraViewDelegate: class {
 
   func setFlashButtonHidden(_ hidden: Bool)
   func imageToLibrary()
+  func videoToLibrary()
   func cameraNotAvailable()
+  func switchCameraMode()
 }
 
 class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate {
@@ -58,9 +60,9 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
   lazy var noCameraButton: UIButton = { [unowned self] in
     let button = UIButton(type: .system)
     let title = NSAttributedString(string: self.configuration.settingsTitle,
-      attributes: [
-        NSAttributedStringKey.font: self.configuration.settingsFont,
-        NSAttributedStringKey.foregroundColor: self.configuration.settingsColor
+                                   attributes: [
+                                    NSAttributedStringKey.font: self.configuration.settingsFont,
+                                    NSAttributedStringKey.foregroundColor: self.configuration.settingsColor
       ])
 
     button.setAttributedTitle(title, for: UIControlState())
@@ -95,6 +97,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
   var animationTimer: Timer?
   var locationManager: LocationManager?
   var startOnFrontCamera: Bool = false
+  var currentCameraMode: BottomContainerView.CameraMode = .photo
 
   private let minimumZoomFactor: CGFloat = 1.0
   private let maximumZoomFactor: CGFloat = 3.0
@@ -173,10 +176,10 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     let centerX = view.bounds.width / 2
 
     noCameraLabel.center = CGPoint(x: centerX,
-      y: view.bounds.height / 2 - 80)
+                                   y: view.bounds.height / 2 - 80)
 
     noCameraButton.center = CGPoint(x: centerX,
-      y: noCameraLabel.frame.maxY + 20)
+                                    y: noCameraLabel.frame.maxY + 20)
 
     blurView.frame = view.bounds
     containerView.frame = view.bounds
@@ -198,12 +201,12 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
   func rotateCamera() {
     UIView.animate(withDuration: 0.3, animations: {
       self.containerView.alpha = 1
-      }, completion: { _ in
-        self.cameraMan.switchCamera {
-          UIView.animate(withDuration: 0.7, animations: {
-            self.containerView.alpha = 0
-          })
-        }
+    }, completion: { _ in
+      self.cameraMan.switchCamera {
+        UIView.animate(withDuration: 0.7, animations: {
+          self.containerView.alpha = 0
+        })
+      }
     })
   }
 
@@ -221,10 +224,10 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
 
     UIView.animate(withDuration: 0.1, animations: {
       self.capturedImageView.alpha = 1
-      }, completion: { _ in
-        UIView.animate(withDuration: 0.1, animations: {
-          self.capturedImageView.alpha = 0
-        })
+    }, completion: { _ in
+      UIView.animate(withDuration: 0.1, animations: {
+        self.capturedImageView.alpha = 0
+      })
     })
 
     cameraMan.takePhoto(previewLayer, location: locationManager?.latestLocation) {
@@ -232,6 +235,43 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
       self.delegate?.imageToLibrary()
     }
   }
+
+  func startTakingVideo() {
+    guard let previewLayer = previewLayer else { return }
+
+    //    UIView.animate(withDuration: 0.1, animations: {
+    //      self.capturedImageView.alpha = 1
+    //    }, completion: { _ in
+    //      UIView.animate(withDuration: 0.1, animations: {
+    //        self.capturedImageView.alpha = 0
+    //      })
+    //    })
+
+    cameraMan.startTakingVideo(previewLayer, location: locationManager?.latestLocation)
+  }
+
+  func stopTakingVideo(_ completion: @escaping () -> Void) {
+    guard let previewLayer = previewLayer else { return }
+
+    //    UIView.animate(withDuration: 0.1, animations: {
+    //      self.capturedImageView.alpha = 1
+    //    }, completion: { _ in
+    //      UIView.animate(withDuration: 0.1, animations: {
+    //        self.capturedImageView.alpha = 0
+    //      })
+    //    })
+
+    cameraMan.stopTakingVideo()
+    completion()
+    //    self.delegate?.videoToLibrary()
+
+  }
+
+  func switchCameraMode() {
+    self.cameraMan.isVideoCapturing = !self.cameraMan.isVideoCapturing
+    self.delegate?.switchCameraMode()
+  }
+
 
   // MARK: - Timer methods
 
@@ -255,9 +295,9 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     UIView.animate(withDuration: 0.5, animations: {
       self.focusImageView.alpha = 1
       self.focusImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
-      }, completion: { _ in
-        self.animationTimer = Timer.scheduledTimer(timeInterval: 1, target: self,
-          selector: #selector(CameraView.timerDidFire), userInfo: nil, repeats: false)
+    }, completion: { _ in
+      self.animationTimer = Timer.scheduledTimer(timeInterval: 1, target: self,
+                                                 selector: #selector(CameraView.timerDidFire), userInfo: nil, repeats: false)
     })
   }
 
@@ -319,5 +359,9 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
 
   func cameraManDidStart(_ cameraMan: CameraMan) {
     setupPreviewLayer()
+  }
+
+  func videoToLibrary() {
+    delegate?.videoToLibrary()
   }
 }

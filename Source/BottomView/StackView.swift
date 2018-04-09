@@ -18,7 +18,7 @@ class ImageStackView: UIView {
     view.alpha = 0.0
 
     return view
-    }()
+  }()
 
   var views: [UIImageView] = {
     var array = [UIImageView]()
@@ -33,7 +33,7 @@ class ImageStackView: UIView {
       array.append(view)
     }
     return array
-    }()
+  }()
 
   // MARK: - Initializers
 
@@ -59,26 +59,26 @@ class ImageStackView: UIView {
 
   func subscribe() {
     NotificationCenter.default.addObserver(self,
-      selector: #selector(imageDidPush(_:)),
-      name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidPush),
-      object: nil)
+                                           selector: #selector(imageDidPush(_:)),
+                                           name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidPush),
+                                           object: nil)
 
     NotificationCenter.default.addObserver(self,
-      selector: #selector(imageStackDidChangeContent(_:)),
-      name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidDrop),
-      object: nil)
+                                           selector: #selector(imageStackDidChangeContent(_:)),
+                                           name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidDrop),
+                                           object: nil)
 
     NotificationCenter.default.addObserver(self,
-      selector: #selector(imageStackDidChangeContent(_:)),
-      name: NSNotification.Name(rawValue: ImageStack.Notifications.stackDidReload),
-      object: nil)
+                                           selector: #selector(imageStackDidChangeContent(_:)),
+                                           name: NSNotification.Name(rawValue: ImageStack.Notifications.stackDidReload),
+                                           object: nil)
   }
 
   override func layoutSubviews() {
     let step: CGFloat = -3.0
     let scale: CGFloat = 0.8
     let viewSize = CGSize(width: frame.width * scale,
-      height: frame.height * scale)
+                          height: frame.height * scale)
 
     let offset = -step * CGFloat(views.count)
     var origin = CGPoint(x: offset, y: offset)
@@ -162,13 +162,13 @@ extension ImageStackView {
 
     UIView.animate(withDuration: 0.3, animations: {
       imageView.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
+    }, completion: { _ in
+      UIView.animate(withDuration: 0.2, animations: { () -> Void in
+        self.activityView.alpha = 0.0
+        imageView.transform = CGAffineTransform.identity
       }, completion: { _ in
-        UIView.animate(withDuration: 0.2, animations: { () -> Void in
-          self.activityView.alpha = 0.0
-          imageView.transform = CGAffineTransform.identity
-          }, completion: { _ in
-            self.activityView.stopAnimating()
-        })
+        self.activityView.stopAnimating()
+      })
     })
   }
 }

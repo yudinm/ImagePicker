@@ -13,7 +13,7 @@ extension ImageGalleryView: UICollectionViewDataSource {
 
   public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionView.reusableIdentifier,
-      for: indexPath) as? ImageGalleryViewCell else { return UICollectionViewCell() }
+                                                        for: indexPath) as? ImageGalleryViewCell else { return UICollectionViewCell() }
 
     let asset = assets[(indexPath as NSIndexPath).row]
 
@@ -26,7 +26,7 @@ extension ImageGalleryView: UICollectionViewDataSource {
 
           UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: UIViewAnimationOptions(), animations: {
             cell.transform = CGAffineTransform.identity
-            }) { _ in }
+          }) { _ in }
 
           self.shouldTransform = false
         }

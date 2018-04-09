@@ -41,16 +41,16 @@ import UIKit
 
   // MARK: Custom behaviour
 
-  @objc public var canRotateCamera = true
+  @objc public var canRotateCamera = false
   @objc public var collapseCollectionViewWhileShot = true
   @objc public var recordLocation = true
   @objc public var allowMultiplePhotoSelection = true
-  @objc public var allowVideoSelection = false
+  @objc public var allowVideoSelection = true
   @objc public var showsImageCountLabel = true
   @objc public var flashButtonAlwaysHidden = false
   @objc public var managesAudioSession = true
   @objc public var allowPinchToZoom = true
-  @objc public var allowedOrientations = UIInterfaceOrientationMask.all
+  @objc public var allowedOrientations = UIInterfaceOrientationMask.landscape
   @objc public var allowVolumeButtonsToTakePicture = true
   @objc public var useLowResolutionPreviewImage = false
 
