@@ -5,8 +5,8 @@ import PhotosUI
 protocol CameraViewDelegate: class {
 
   func setFlashButtonHidden(_ hidden: Bool)
-  func imageToLibrary()
-  func videoToLibrary()
+  func imageToLibrary(_ completion: @escaping () -> Void)
+  func videoToLibrary(_ completion: @escaping () -> Void)
   func cameraNotAvailable()
   func switchCameraMode()
 }
@@ -98,7 +98,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
   var locationManager: LocationManager?
   var startOnFrontCamera: Bool = false
   var currentCameraMode: BottomContainerView.CameraMode = .photo
-
+  
   private let minimumZoomFactor: CGFloat = 1.0
   private let maximumZoomFactor: CGFloat = 3.0
 
@@ -231,40 +231,19 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     })
 
     cameraMan.takePhoto(previewLayer, location: locationManager?.latestLocation) {
-      completion()
-      self.delegate?.imageToLibrary()
+      self.delegate?.imageToLibrary(completion)
     }
   }
 
   func startTakingVideo() {
     guard let previewLayer = previewLayer else { return }
-
-    //    UIView.animate(withDuration: 0.1, animations: {
-    //      self.capturedImageView.alpha = 1
-    //    }, completion: { _ in
-    //      UIView.animate(withDuration: 0.1, animations: {
-    //        self.capturedImageView.alpha = 0
-    //      })
-    //    })
-
     cameraMan.startTakingVideo(previewLayer, location: locationManager?.latestLocation)
   }
 
   func stopTakingVideo(_ completion: @escaping () -> Void) {
     guard let previewLayer = previewLayer else { return }
-
-    //    UIView.animate(withDuration: 0.1, animations: {
-    //      self.capturedImageView.alpha = 1
-    //    }, completion: { _ in
-    //      UIView.animate(withDuration: 0.1, animations: {
-    //        self.capturedImageView.alpha = 0
-    //      })
-    //    })
-
     cameraMan.stopTakingVideo()
-    completion()
-    //    self.delegate?.videoToLibrary()
-
+    cameraMan.actionStopTakingVideo = completion
   }
 
   func switchCameraMode() {
@@ -361,7 +340,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     setupPreviewLayer()
   }
 
-  func videoToLibrary() {
-    delegate?.videoToLibrary()
+  func videoToLibrary(_ completion: @escaping () -> Void) {
+    delegate?.videoToLibrary(completion)
   }
 }

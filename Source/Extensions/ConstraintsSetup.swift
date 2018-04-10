@@ -56,11 +56,9 @@ extension BottomContainerView {
                                      relatedBy: .equal, toItem: self, attribute: .centerY,
                                      multiplier: 1, constant: -2))
 
-    let screenSize = Helper.screenSizeForOrientation()
-
-    addConstraint(NSLayoutConstraint(item: stackView, attribute: .centerX,
-                                     relatedBy: .equal, toItem: self, attribute: .left,
-                                     multiplier: 1, constant: screenSize.width/4 - ButtonPicker.Dimensions.buttonBorderSize/3))
+    addConstraint(NSLayoutConstraint(item: stackView, attribute: .trailing,
+                                     relatedBy: .equal, toItem: pickerButton, attribute: .leading,
+                                     multiplier: 1, constant: -stackView.bounds.width))
 
     addConstraint(NSLayoutConstraint(item: topSeparator, attribute: .height,
                                      relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,

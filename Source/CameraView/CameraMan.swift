@@ -6,7 +6,7 @@ protocol CameraManDelegate: class {
   func cameraManNotAvailable(_ cameraMan: CameraMan)
   func cameraManDidStart(_ cameraMan: CameraMan)
   func cameraMan(_ cameraMan: CameraMan, didChangeInput input: AVCaptureDeviceInput)
-  func videoToLibrary()
+  func videoToLibrary(_ completion: @escaping () -> Void)
 }
 
 class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
@@ -34,6 +34,10 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
       }
     }
   }
+  var actionStopTakingVideo: () -> Void = { //_ in
+    
+  }
+
 
   deinit {
     stop()
@@ -167,14 +171,6 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
       session.addOutput(movieFileOutput)
     }
     recordingURL = URL(fileURLWithPath: NSString.path(withComponents: [NSTemporaryDirectory(), "Movie.MOV"]))
-    //    queue.async {
-    ////      self.session.stopRunning()
-    //      self.session.startRunning()
-    //
-    //      DispatchQueue.main.async {
-    //        self.delegate?.cameraManDidStart(self)
-    //      }
-    //    }
   }
 
   func startPhotoCapturing() {
@@ -256,11 +252,7 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
 
     connection.videoOrientation = Helper.videoOrientation()
 
-
     queue.async {
-      //            if (self.session.canAdd(connection)) {
-      //                self.session.addOutput(self.videoDataOutput!)
-      //            }
       guard let movieFileOutput = self.movieFileOutput else { return }
       guard let recordingURL = self.recordingURL else { return }
       var error:NSError? = nil
@@ -270,13 +262,6 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
         print("\(error.localizedDescription)")
       }
       movieFileOutput.startRecording(to: recordingURL, recordingDelegate: self)
-      //      if let completion = completion { completion() }
-      //
-      //            self.queue.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 10), execute: {
-      //                self.session.stopRunning()
-      //                self.saveVideo(completion)
-      //            })
-
     }
   }
 
@@ -303,7 +288,9 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
         return
       }
       DispatchQueue.main.async {
-        self.delegate?.videoToLibrary()
+        self.delegate?.videoToLibrary {
+          self.actionStopTakingVideo()
+        }
       }
     })
   }

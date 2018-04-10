@@ -81,11 +81,8 @@ open class ImagePickerController: UIViewController {
   var statusBarHidden = true
   var isRecordingVideo = false
   
-  fileprivate var isTakingPicture = false {
-    didSet {
-      print("\(isTakingPicture)")
-    }
-  }
+  fileprivate var isTakingPicture = false
+  
   open var doneButtonTitle: String? {
     didSet {
       if let doneButtonTitle = doneButtonTitle {
@@ -134,6 +131,7 @@ open class ImagePickerController: UIViewController {
     
     bottomContainer.pickerButton.isHidden = false
     bottomContainer.pickerVideoButton.isHidden = true
+
   }
   
   open override func viewWillAppear(_ animated: Bool) {
@@ -171,6 +169,10 @@ open class ImagePickerController: UIViewController {
     
     UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification,
                                     bottomContainer);
+    
+    if configuration.defaultCollectionViewCollapsed {
+      collapseGalleryView(nil)
+    }
   }
   
   open func resetAssets() {
@@ -321,7 +323,7 @@ open class ImagePickerController: UIViewController {
     })
   }
   
-open func expandGalleryView() {
+  open func expandGalleryView() {
     galleryView.collectionViewLayout.invalidateLayout()
     
     UIView.animate(withDuration: 0.3, animations: {
@@ -361,8 +363,9 @@ open func expandGalleryView() {
     let action: () -> Void = { [weak self] in
       guard let `self` = self else { return }
       self.cameraController.takePicture {
-        self.isTakingPicture = false
-        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
+          self.isTakingPicture = false
+        })
       }
     }
     
@@ -376,7 +379,6 @@ open func expandGalleryView() {
   fileprivate func startRecording() {
     guard isBelowImageLimit() && !isTakingPicture else { return }
     isTakingPicture = true
-    //        bottomContainer.pickerButton.isEnabled = false
     bottomContainer.stackView.startLoader()
     let action: () -> Void = { [weak self] in
       guard let `self` = self else { return }
@@ -391,20 +393,11 @@ open func expandGalleryView() {
   }
   
   fileprivate func endRecording() {
-//    guard !isTakingPicture else { return }
-//    isTakingPicture = false
-    //        bottomContainer.pickerVideoButton.isEnabled = false
-    //        bottomContainer.stackView.stopLoader()
-    let action: () -> Void = { [weak self] in
-      guard let `self` = self else { return }
-      self.cameraController.stopTakingVideo {
+    self.cameraController.stopTakingVideo {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
         self.isTakingPicture = false
-        
-      }
+      })
     }
-    
-//    expandGalleryView()
-    action()
   }
 }
 
@@ -424,6 +417,7 @@ extension ImagePickerController: BottomContainerViewDelegate {
     }
     
     isRecordingVideo = !isRecordingVideo
+    self.bottomContainer.switchCameraModeButton.isEnabled = !isRecordingVideo
   }
   
   func doneButtonDidPress() {
@@ -466,7 +460,7 @@ extension ImagePickerController: CameraViewDelegate {
     }
   }
   
-  func imageToLibrary() {
+  func imageToLibrary(_ completion: @escaping () -> Void) {
     guard let collectionSize = galleryView.collectionSize else { return }
     
     galleryView.fetchPhotos {
@@ -484,10 +478,13 @@ extension ImagePickerController: CameraViewDelegate {
       self.galleryView.collectionView.transform = CGAffineTransform(translationX: collectionSize.width, y: 0)
     }, completion: { _ in
       self.galleryView.collectionView.transform = CGAffineTransform.identity
+      guard self.galleryView.assets.count > 0 else { return }
+      self.galleryView.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
+      completion()
     })
   }
   
-  func videoToLibrary() {
+  func videoToLibrary(_ completion: @escaping () -> Void) {
     guard let collectionSize = galleryView.collectionSize else { return }
     
     galleryView.fetchPhotos {
@@ -505,6 +502,9 @@ extension ImagePickerController: CameraViewDelegate {
       self.galleryView.collectionView.transform = CGAffineTransform(translationX: collectionSize.width, y: 0)
     }, completion: { _ in
       self.galleryView.collectionView.transform = CGAffineTransform.identity
+      guard self.galleryView.assets.count > 0 else { return }
+      self.galleryView.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
+      completion()
     })
   }
   
@@ -529,7 +529,7 @@ extension ImagePickerController: CameraViewDelegate {
     
     UIView.animate(withDuration: 0.25, animations: {
       [self.topView.rotateCamera, self.bottomContainer.pickerButton,
-       self.bottomContainer.stackView, self.bottomContainer.doneButton, self.bottomContainer.switchCameraModeButton].forEach {
+       self.bottomContainer.stackView, self.bottomContainer.doneButton, self.bottomContainer.switchCameraModeButton, self.bottomContainer.pickerVideoButton].forEach {
         $0.transform = rotate
       }
       
@@ -570,6 +570,7 @@ extension ImagePickerController: TopViewDelegate {
 extension ImagePickerController: ImageGalleryPanGestureDelegate {
   
   func panGestureDidStart() {
+    guard !isTakingPicture && !isRecordingVideo else { return }
     guard let collectionSize = galleryView.collectionSize else { return }
     
     initialFrame = galleryView.frame
@@ -578,6 +579,8 @@ extension ImagePickerController: ImageGalleryPanGestureDelegate {
   }
   
   @objc func panGestureRecognizerHandler(_ gesture: UIPanGestureRecognizer) {
+    guard !isTakingPicture && !isRecordingVideo else { return }
+    
     let translation = gesture.translation(in: view)
     let velocity = gesture.velocity(in: view)
     
@@ -591,6 +594,7 @@ extension ImagePickerController: ImageGalleryPanGestureDelegate {
   }
   
   func panGestureDidChange(_ translation: CGPoint) {
+    guard !isTakingPicture && !isRecordingVideo else { return }
     guard let initialFrame = initialFrame else { return }
     
     let galleryHeight = initialFrame.height - translation.y
@@ -616,6 +620,7 @@ extension ImagePickerController: ImageGalleryPanGestureDelegate {
   }
   
   func panGestureDidEnd(_ translation: CGPoint, velocity: CGPoint) {
+    guard !isTakingPicture && !isRecordingVideo else { return }
     guard let initialFrame = initialFrame else { return }
     let galleryHeight = initialFrame.height - translation.y
     if galleryView.frame.height < GestureConstants.minimumHeight && velocity.y < 0 {
