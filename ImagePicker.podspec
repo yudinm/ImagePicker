@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/hyperoslo/ImagePicker"
   s.license          = 'MIT'
   s.author           = { "Hyper Interaktiv AS" => "ios@hyper.no" }
-  s.source           = { :git => "https://github.com/hyperoslo/ImagePicker.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/yudinm/ImagePicker.git" }
   s.social_media_url = 'https://twitter.com/hyperoslo'
   s.platform     = :ios, '9.0'
   s.requires_arc = true
