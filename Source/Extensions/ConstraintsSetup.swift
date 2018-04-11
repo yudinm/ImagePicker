@@ -10,11 +10,11 @@ extension BottomContainerView {
       addConstraint(NSLayoutConstraint(item: pickerButton, attribute: attribute,
                                        relatedBy: .equal, toItem: self, attribute: attribute,
                                        multiplier: 1, constant: 0))
-  
+
       addConstraint(NSLayoutConstraint(item: pickerVideoButton, attribute: attribute,
                                        relatedBy: .equal, toItem: self, attribute: attribute,
                                        multiplier: 1, constant: 0))
-  
+
       addConstraint(NSLayoutConstraint(item: borderPickerButton, attribute: attribute,
                                        relatedBy: .equal, toItem: self, attribute: attribute,
                                        multiplier: 1, constant: 0))
@@ -30,15 +30,15 @@ extension BottomContainerView {
       addConstraint(NSLayoutConstraint(item: pickerButton, attribute: attribute,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: ButtonPicker.Dimensions.buttonSize))
-  
+
       addConstraint(NSLayoutConstraint(item: pickerVideoButton, attribute: attribute,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: ButtonVideoPicker.Dimensions.buttonSize))
-  
+
       addConstraint(NSLayoutConstraint(item: borderPickerButton, attribute: attribute,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: ButtonPicker.Dimensions.buttonBorderSize))
-  
+
       addConstraint(NSLayoutConstraint(item: stackView, attribute: attribute,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: ImageStackView.Dimensions.imageSize))
@@ -103,15 +103,15 @@ extension TopView {
       addConstraint(NSLayoutConstraint(item: rotateCamera, attribute: .right,
                                        relatedBy: .equal, toItem: self, attribute: .right,
                                        multiplier: 1, constant: Dimensions.rightOffset))
-  
+
       addConstraint(NSLayoutConstraint(item: rotateCamera, attribute: .centerY,
                                        relatedBy: .equal, toItem: self, attribute: .centerY,
                                        multiplier: 1, constant: 0))
-  
+
       addConstraint(NSLayoutConstraint(item: rotateCamera, attribute: .width,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: 55))
-  
+
       addConstraint(NSLayoutConstraint(item: rotateCamera, attribute: .height,
                                        relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
                                        multiplier: 1, constant: 55))
@@ -191,7 +191,7 @@ extension ImageGalleryViewCell {
       addConstraint(NSLayoutConstraint(item: imageView, attribute: attribute,
                                        relatedBy: .equal, toItem: self, attribute: attribute,
                                        multiplier: 1, constant: 0))
-  
+
       addConstraint(NSLayoutConstraint(item: selectedImageView, attribute: attribute,
                                        relatedBy: .equal, toItem: self, attribute: attribute,
                                        multiplier: 1, constant: 0))

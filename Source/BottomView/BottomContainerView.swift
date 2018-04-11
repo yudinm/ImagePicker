@@ -13,7 +13,7 @@ protocol BottomContainerViewDelegate: class {
 
 open class BottomContainerView: UIView {
 
-  enum CameraMode : Int {
+  enum CameraMode: Int {
     case photo
     case video
     //        case stream
@@ -192,4 +192,3 @@ extension BottomContainerView: ButtonVideoPickerDelegate {
     delegate?.pickerVideoButtonDidPress()
   }
 }
-

@@ -98,7 +98,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
   var locationManager: LocationManager?
   var startOnFrontCamera: Bool = false
   var currentCameraMode: BottomContainerView.CameraMode = .photo
-  
+
   private let minimumZoomFactor: CGFloat = 1.0
   private let maximumZoomFactor: CGFloat = 3.0
 
@@ -250,7 +250,6 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     self.cameraMan.isVideoCapturing = !self.cameraMan.isVideoCapturing
     self.delegate?.switchCameraMode()
   }
-
 
   // MARK: - Timer methods
 

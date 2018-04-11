@@ -26,7 +26,7 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
     didSet {
 
       queue.async {
-        if (self.isVideoCapturing) {
+        if self.isVideoCapturing {
           self.startVideoCapturing()
           return
         }
@@ -35,9 +35,8 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
   }
   var actionStopTakingVideo: () -> Void = { //_ in
-    
-  }
 
+  }
 
   deinit {
     stop()
@@ -92,7 +91,6 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
     } catch {
       print("\(error.localizedDescription)")
     }
-
 
   }
 
@@ -255,7 +253,6 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
     queue.async {
       guard let movieFileOutput = self.movieFileOutput else { return }
       guard let recordingURL = self.recordingURL else { return }
-      var error:NSError? = nil
       do {
         try FileManager.default.removeItem(at: self.recordingURL!)
       } catch {
@@ -282,7 +279,7 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
     PHPhotoLibrary.shared().performChanges({
       let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
       request?.creationDate = Date()
-    }, completionHandler: { (_,error) in
+    }, completionHandler: { (_, error) in
       if let error = error {
         print("\(error.localizedDescription)")
         return
