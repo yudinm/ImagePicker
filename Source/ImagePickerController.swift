@@ -39,7 +39,7 @@ open class ImagePickerController: UIViewController {
 
   open lazy var topView: TopView = { [unowned self] in
     let view = TopView(configuration: self.configuration)
-    view.backgroundColor = UIColor.clear
+    view.backgroundColor = UIColor.clear //self.configuration.backgroundColor
     view.delegate = self
 
     return view
@@ -66,6 +66,19 @@ open class ImagePickerController: UIViewController {
 
     return view
     }()
+  
+  let overlayRotateYourPhoneImageView = UIImageView(image: AssetManager.getImage("rotateYourPhone"))
+  
+  lazy var overlayRotateYourPhoneView: UIView = {
+    let view = UIView()
+    view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+    
+    view.addSubview(overlayRotateYourPhoneImageView)
+    overlayRotateYourPhoneImageView.translatesAutoresizingMaskIntoConstraints = false
+    view.translatesAutoresizingMaskIntoConstraints = false
+
+    return view
+  }()
 
   var volume = AVAudioSession.sharedInstance().outputVolume
 
@@ -113,7 +126,7 @@ open class ImagePickerController: UIViewController {
   open override func viewDidLoad() {
     super.viewDidLoad()
 
-    for subview in [cameraController.view, galleryView, bottomContainer, topView] {
+    for subview in [cameraController.view/*, galleryView*/, bottomContainer, topView, overlayRotateYourPhoneView] {
       view.addSubview(subview!)
       subview?.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -121,9 +134,8 @@ open class ImagePickerController: UIViewController {
     view.addSubview(volumeView)
     view.sendSubview(toBack: volumeView)
 
-    view.backgroundColor = UIColor.white
     view.backgroundColor = configuration.mainColor
-
+    
     cameraController.view.addGestureRecognizer(panGestureRecognizer)
 
     subscribe()
@@ -522,6 +534,7 @@ extension ImagePickerController: CameraViewDelegate {
 
   @objc public func handleRotation(_ note: Notification?) {
     applyOrientationTransforms()
+    updateUI(isPortrait: UIDeviceOrientationIsPortrait(UIDevice.current.orientation))
   }
 
   func applyOrientationTransforms() {
@@ -630,5 +643,20 @@ extension ImagePickerController: ImageGalleryPanGestureDelegate {
     } else if velocity.y > GestureConstants.velocity || galleryHeight < GestureConstants.minimumHeight {
       collapseGalleryView(nil)
     }
+  }
+}
+
+extension ImagePickerController {
+  open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
+    let isPortrait = size.height > size.width
+    updateUI(isPortrait: isPortrait)
+  }
+  
+  private func updateUI(isPortrait:Bool) {
+    self.bottomContainer.alpha = isPortrait ? 0 : 1
+    self.topView.alpha = isPortrait ? 0 : 1
+    self.overlayRotateYourPhoneView.alpha = isPortrait ? 1 : 0
+    self.overlayRotateYourPhoneView.isHidden = !isPortrait
   }
 }

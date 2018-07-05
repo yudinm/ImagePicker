@@ -179,7 +179,29 @@ extension ImagePickerController {
 
     view.addConstraint(NSLayoutConstraint(item: cameraController.view, attribute: .height,
                                           relatedBy: .equal, toItem: view, attribute: .height,
-                                          multiplier: 1, constant: -BottomContainerView.Dimensions.height))
+                                          multiplier: 1, constant: 0 /*-BottomContainerView.Dimensions.height*/))
+    
+    for attribute: NSLayoutAttribute in [.left, .top, .width, .bottom] {
+      view.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneView, attribute: attribute,
+                                            relatedBy: .equal, toItem: view, attribute: attribute,
+                                            multiplier: 1, constant: 0))
+    }
+
+    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .height,
+                                          relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
+                                          multiplier: 1, constant: 100))
+
+    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .width,
+                                          relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
+                                          multiplier: 1, constant: 100))
+
+    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .centerY,
+                                     relatedBy: .equal, toItem: overlayRotateYourPhoneView, attribute: .centerY,
+                                     multiplier: 1, constant: 0))
+
+    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .centerX,
+                                          relatedBy: .equal, toItem: overlayRotateYourPhoneView, attribute: .centerX,
+                                          multiplier: 1, constant: 0))
   }
 }
 

@@ -34,7 +34,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
 
   lazy var capturedImageView: UIView = { [unowned self] in
     let view = UIView()
-    view.backgroundColor = UIColor.black
+    view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
     view.alpha = 0
 
     return view
@@ -124,7 +124,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     }
 
     view.backgroundColor = configuration.mainColor
-
+    
     view.addSubview(containerView)
     containerView.addSubview(blurView)
 
@@ -181,7 +181,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     noCameraButton.center = CGPoint(x: centerX,
                                     y: noCameraLabel.frame.maxY + 20)
 
-    blurView.frame = view.bounds
+//    blurView.frame = view.bounds
     containerView.frame = view.bounds
     capturedImageView.frame = view.bounds
   }

@@ -5,13 +5,13 @@ import UIKit
 
   // MARK: Colors
 
-  @objc public var backgroundColor = UIColor(red: 0.15, green: 0.19, blue: 0.24, alpha: 1)
+  @objc public var backgroundColor = UIColor.black.withAlphaComponent(0.6)
   @objc public var gallerySeparatorColor = UIColor.black.withAlphaComponent(0.6)
-  @objc public var mainColor = UIColor(red: 0.09, green: 0.11, blue: 0.13, alpha: 1)
+  @objc public var mainColor = UIColor.black.withAlphaComponent(0.6)//UIColor(red: 0.09, green: 0.11, blue: 0.13, alpha: 1)
   @objc public var noImagesColor = UIColor(red: 0.86, green: 0.86, blue: 0.86, alpha: 1)
   @objc public var noCameraColor = UIColor(red: 0.86, green: 0.86, blue: 0.86, alpha: 1)
   @objc public var settingsColor = UIColor.white
-  @objc public var bottomContainerColor = UIColor(red: 0.09, green: 0.11, blue: 0.13, alpha: 1)
+  @objc public var bottomContainerColor = UIColor.black.withAlphaComponent(0.6)
 
   // MARK: Fonts
 

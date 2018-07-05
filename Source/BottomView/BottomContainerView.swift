@@ -20,7 +20,7 @@ open class BottomContainerView: UIView {
   }
 
   struct Dimensions {
-    static let height: CGFloat = 101
+    static let height: CGFloat = 123
   }
 
   var configuration = Configuration()
@@ -79,7 +79,7 @@ open class BottomContainerView: UIView {
     return button
     }()
 
-  lazy var stackView = ImageStackView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+  lazy var stackView = ImageStackView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
 
   lazy var topSeparator: UIView = { [unowned self] in
     let view = UIView()
@@ -106,6 +106,7 @@ open class BottomContainerView: UIView {
     }
     super.init(frame: .zero)
     configure()
+    self.backgroundColor = UIColor.orange
   }
 
   public required init?(coder aDecoder: NSCoder) {
