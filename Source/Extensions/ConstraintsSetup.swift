@@ -187,22 +187,40 @@ extension ImagePickerController {
                                             multiplier: 1, constant: 0))
     }
 
-    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .height,
-                                          relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
-                                          multiplier: 1, constant: 100))
-
-    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .width,
-                                          relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
-                                          multiplier: 1, constant: 100))
-
-    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .centerY,
-                                     relatedBy: .equal, toItem: overlayRotateYourPhoneView, attribute: .centerY,
-                                     multiplier: 1, constant: 0))
-
-    overlayRotateYourPhoneView.addConstraint(NSLayoutConstraint(item: overlayRotateYourPhoneImageView, attribute: .centerX,
-                                          relatedBy: .equal, toItem: overlayRotateYourPhoneView, attribute: .centerX,
-                                          multiplier: 1, constant: 0))
   }
+}
+
+extension OverlayView {
+    
+    func setupConstraints() {
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneImageView, attribute: .height,
+                                              relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
+                                              multiplier: 1, constant: 100))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneImageView, attribute: .width,
+                                              relatedBy: .equal, toItem: nil, attribute: .notAnAttribute,
+                                              multiplier: 1, constant: 100))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneImageView, attribute: .centerX,
+                                              relatedBy: .equal, toItem: self, attribute: .centerX,
+                                              multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneImageView, attribute: .centerY,
+                                              relatedBy: .equal, toItem: self, attribute: .centerY,
+                                              multiplier: 1, constant: -100))
+        
+
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneLabel, attribute: .centerX,
+                                              relatedBy: .equal, toItem: self, attribute: .centerX,
+                                              multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneLabel, attribute: .top,
+                                              relatedBy: .equal, toItem: rotateYourPhoneImageView, attribute: .bottom,
+                                              multiplier: 1, constant: 16.0))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneLabel, attribute: .left,
+                                              relatedBy: .equal, toItem: self, attribute: .left,
+                                              multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: rotateYourPhoneLabel, attribute: .right,
+                                              relatedBy: .equal, toItem: self, attribute: .right,
+                                              multiplier: 1, constant: 0))
+    }
+
 }
 
 extension ImageGalleryViewCell {

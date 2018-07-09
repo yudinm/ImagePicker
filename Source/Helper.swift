@@ -4,6 +4,7 @@ import AVFoundation
 struct Helper {
 
   static var previousOrientation = UIDeviceOrientation.unknown
+  static var lastOrientation = UIDeviceOrientation.unknown
 
   static func getTransform(fromDeviceOrientation orientation: UIDeviceOrientation) -> CGAffineTransform {
     switch orientation {

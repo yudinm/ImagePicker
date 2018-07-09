@@ -67,18 +67,7 @@ open class ImagePickerController: UIViewController {
     return view
     }()
   
-  let overlayRotateYourPhoneImageView = UIImageView(image: AssetManager.getImage("rotateYourPhone"))
-  
-  lazy var overlayRotateYourPhoneView: UIView = {
-    let view = UIView()
-    view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-    
-    view.addSubview(overlayRotateYourPhoneImageView)
-    overlayRotateYourPhoneImageView.translatesAutoresizingMaskIntoConstraints = false
-    view.translatesAutoresizingMaskIntoConstraints = false
-
-    return view
-  }()
+  lazy var overlayRotateYourPhoneView: OverlayView = OverlayView()
 
   var volume = AVAudioSession.sharedInstance().outputVolume
 
@@ -534,7 +523,14 @@ extension ImagePickerController: CameraViewDelegate {
 
   @objc public func handleRotation(_ note: Notification?) {
     applyOrientationTransforms()
-    updateUI(isPortrait: UIDeviceOrientationIsPortrait(UIDevice.current.orientation))
+    
+    updateUI(isPortrait: UIDeviceOrientationIsPortrait(UIDevice.current.orientation) ||
+        UIDeviceOrientationIsPortrait(Helper.lastOrientation) &&
+        (UIDevice.current.orientation == UIDeviceOrientation.faceUp ||
+        UIDevice.current.orientation == UIDeviceOrientation.faceDown)
+    )
+    
+    Helper.lastOrientation = UIDevice.current.orientation
   }
 
   func applyOrientationTransforms() {
