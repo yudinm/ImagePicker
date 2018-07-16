@@ -8,9 +8,9 @@ protocol ButtonVideoPickerDelegate: class {
 class ButtonVideoPicker: UIButton {
 
     struct Dimensions {
-        static let borderWidth: CGFloat = 2
-        static let buttonSize: CGFloat = 58
-        static let buttonBorderSize: CGFloat = 68
+        static let borderWidth: CGFloat = 6
+        static let buttonSize: CGFloat = 46
+        static let buttonBorderSize: CGFloat = 66
     }
 
     var configuration = Configuration()
@@ -44,30 +44,8 @@ class ButtonVideoPicker: UIButton {
     func configure() {
         addSubview(numberLabel)
 
-        subscribe()
         setupButton()
         setupConstraints()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    func subscribe() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(recalculatePhotosCount(_:)),
-                                               name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidPush),
-                                               object: nil)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(recalculatePhotosCount(_:)),
-                                               name: NSNotification.Name(rawValue: ImageStack.Notifications.imageDidDrop),
-                                               object: nil)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(recalculatePhotosCount(_:)),
-                                               name: NSNotification.Name(rawValue: ImageStack.Notifications.stackDidReload),
-                                               object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -86,21 +64,18 @@ class ButtonVideoPicker: UIButton {
 
     // MARK: - Actions
 
-    @objc func recalculatePhotosCount(_ notification: Notification) {
-        guard let sender = notification.object as? ImageStack else { return }
-        numberLabel.text = sender.assets.isEmpty ? "" : String(sender.assets.count)
-    }
-
     @objc func pickerVideoButtonDidPress(_ button: UIButton) {
         recording = !recording
         if recording {
             accessibilityLabel = "Stop recording"
-            backgroundColor = UIColor.red.withAlphaComponent(0.6)
+            numberLabel.text = "Stop"
+            backgroundColor = UIColor.red.withAlphaComponent(0.8)
         } else {
             accessibilityLabel = "Start recording"
+            numberLabel.text = ""
             backgroundColor = UIColor.red.withAlphaComponent(0.9)
         }
-        numberLabel.textColor = UIColor.black
+        numberLabel.textColor = UIColor.white.withAlphaComponent(0.8)
         numberLabel.sizeToFit()
         delegate?.buttonVideoDidPress()
     }

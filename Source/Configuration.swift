@@ -15,11 +15,11 @@ import UIKit
 
   // MARK: Fonts
 
-  @objc public var numberLabelFont = UIFont.systemFont(ofSize: 19, weight: UIFont.Weight.bold)
-  @objc public var doneButton = UIFont.systemFont(ofSize: 19, weight: UIFont.Weight.medium)
+  @objc public var numberLabelFont = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.medium)
+  @objc public var doneButton = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
   @objc public var flashButton = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.medium)
-  @objc public var noImagesFont = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-  @objc public var noCameraFont = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+  @objc public var noImagesFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+  @objc public var noCameraFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
   @objc public var settingsFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
 
   // MARK: Titles
@@ -71,7 +71,7 @@ import UIKit
 extension Configuration {
 
   @objc public var rotationTransform: CGAffineTransform {
-    let currentOrientation = UIDevice.current.orientation
+    let currentOrientation = UIApplication.shared.statusBarOrientation
 
     // check if current orientation is allowed
     switch currentOrientation {

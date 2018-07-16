@@ -24,7 +24,7 @@
 		3E0B31E77EFE064C4E63D017 /* Pods_ImagePickerDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImagePickerDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		733A7AD0105A657A80502E72 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F1C1FC700491641CD7DB2C1 /* Pods-ImagePickerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImagePickerDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ImagePickerDemo/Pods-ImagePickerDemo.release.xcconfig"; sourceTree = "<group>"; };
-		D20AA8A41D5330100085FF5B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D20AA8A41D5330100085FF5B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; tabWidth = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
