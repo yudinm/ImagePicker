@@ -24,7 +24,11 @@ class ButtonVideoPicker: UIButton {
         }()
 
     weak var delegate: ButtonVideoPickerDelegate?
-    var recording: Bool = false
+    var recording: Bool = false {
+        didSet {
+            updateView()
+        }
+    }
 
     // MARK: - Initializers
 
@@ -66,6 +70,10 @@ class ButtonVideoPicker: UIButton {
 
     @objc func pickerVideoButtonDidPress(_ button: UIButton) {
         recording = !recording
+        delegate?.buttonVideoDidPress()
+    }
+    
+    func updateView() {
         if recording {
             accessibilityLabel = "Stop recording"
             numberLabel.text = "Stop"
@@ -77,7 +85,6 @@ class ButtonVideoPicker: UIButton {
         }
         numberLabel.textColor = UIColor.white.withAlphaComponent(0.8)
         numberLabel.sizeToFit()
-        delegate?.buttonVideoDidPress()
     }
 
     @objc func pickerVideoButtonDidHighlight(_ button: UIButton) {

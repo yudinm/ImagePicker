@@ -21,8 +21,14 @@ open class ImagePickerController: UIViewController {
     @IBOutlet weak var ivLastImage: UIImageView!
     @IBOutlet weak var btOpenGallery: UIButton!
     @IBOutlet weak var vLastImageActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var vTopPanel: UIView!
+    @IBOutlet weak var lblTimeCaptured: UILabel!
+    @IBOutlet weak var btFlashMode: UIButton!
     var capturedMedia: [PHAsset] = []
-    
+    var seconds: TimeInterval = TimeInterval(0)
+    var timer = Timer()
+    var lastSwipeIndex = 999
+
     struct GestureConstants {
         static let maximumHeight: CGFloat = 200
         static let minimumHeight: CGFloat = 125
@@ -114,6 +120,7 @@ open class ImagePickerController: UIViewController {
         setupViews()
         setupConstraints()
         setupBinding()
+        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex)
     }
     
     func setupViews() {
@@ -132,7 +139,8 @@ open class ImagePickerController: UIViewController {
         [bottomContainer.swipeMenuView].forEach {
             $0.transform = rotate
         }
-
+        self.automaticallyAdjustsScrollViewInsets = false
+        
         
         for attribute: NSLayoutAttribute in [.left, .top, .right, .bottom] {
             vPickerButtonContainer.addConstraint(NSLayoutConstraint(item: bottomContainer.borderPickerButton, attribute: attribute,
@@ -334,8 +342,6 @@ open class ImagePickerController: UIViewController {
     fileprivate func takePicture() {
         guard isBelowImageLimit() && !isTakingPicture else { return }
         isTakingPicture = true
-//        bottomContainer.pickerButton.isEnabled = false
-//        bottomContainer.stackView.startLoader()
         let action: () -> Void = { [weak self] in
             guard let `self` = self else { return }
             self.cameraController.takePicture {
@@ -348,22 +354,35 @@ open class ImagePickerController: UIViewController {
     }
     
     fileprivate func startRecording() {
-        guard isBelowImageLimit() && !isTakingPicture else { endRecording(); return }
-        isTakingPicture = true
-        let action: () -> Void = { [weak self] in
-            guard let `self` = self else { return }
-            self.cameraController.startTakingVideo()
+        guard isBelowImageLimit() && !isTakingPicture else { endRecording { }; return }
+        if #available(iOS 9.0, *) {
+            AudioServicesPlaySystemSoundWithCompletion(SystemSoundID(1117), nil)
+        } else {
+            AudioServicesPlaySystemSound(1117)
         }
-        action()
-    
+        isTakingPicture = true
+        self.cameraController.startTakingVideo()
+        seconds = TimeInterval(0)
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(updateTimer)), userInfo: nil, repeats: true)
     }
     
-    fileprivate func endRecording() {
+    @objc func updateTimer() {
+        lblTimeCaptured.text = timeString(time: seconds)
+        seconds += 1
+    }
+    
+    func timeString(time: TimeInterval) -> String {
+        let hours = Int(time) / 3600
+        let minutes = Int(time) / 60 % 60
+        let seconds = Int(time) % 60
+        return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+    }
+    
+    fileprivate func endRecording(_ completion: @escaping () -> Void) {
         self.cameraController.stopTakingVideo {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
-                self.isTakingPicture = false
-                self.updateLastImage()
-            })
+            self.isTakingPicture = false
+            self.timer.invalidate()
+            completion()
         }
     }
 }
@@ -380,7 +399,7 @@ extension ImagePickerController: BottomContainerViewDelegate {
         if !isRecordingVideo {
             startRecording()
         } else {
-            endRecording()
+            endRecording { }
         }
         
         isRecordingVideo = !isRecordingVideo
@@ -413,19 +432,6 @@ extension ImagePickerController: CameraViewDelegate {
         updateLastImage()
         bottomContainer.pickerButton.isEnabled = true
         completion()
-//        guard let collectionSize = galleryView.collectionSize else { return }
-//
-//        galleryView.fetchPhotos {
-//            guard let asset = self.galleryView.assets.first else { return }
-//            if self.configuration.allowMultiplePhotoSelection == false {
-//                self.stack.assets.removeAll()
-//            }
-//            self.stack.pushAsset(asset)
-//        }
-//
-//        galleryView.shouldTransform = true
-//        bottomContainer.pickerButton.isEnabled = true
-//
 //        UIView.animate(withDuration: 0.3, animations: {
 //            self.galleryView.collectionView.transform = CGAffineTransform(translationX: collectionSize.width, y: 0)
 //        }, completion: { _ in
@@ -436,30 +442,12 @@ extension ImagePickerController: CameraViewDelegate {
 //        })
     }
     
-//    func videoToLibrary(_ completion: @escaping () -> Void) {
-//        guard let collectionSize = galleryView.collectionSize else { return }
-//
-//        galleryView.fetchPhotos {
-//            guard let asset = self.galleryView.assets.first else { return }
-//            if self.configuration.allowMultiplePhotoSelection == false {
-//                self.stack.assets.removeAll()
-//            }
-//            self.stack.pushAsset(asset)
-//        }
-//
-//        galleryView.shouldTransform = true
-//        bottomContainer.pickerVideoButton.isEnabled = true
-//
-//        UIView.animate(withDuration: 0.3, animations: {
-//            self.galleryView.collectionView.transform = CGAffineTransform(translationX: collectionSize.width, y: 0)
-//        }, completion: { _ in
-//            self.galleryView.collectionView.transform = CGAffineTransform.identity
-//            guard self.galleryView.assets.count > 0 else { return }
-//            self.galleryView.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
-//            completion()
-//        })
-//    }
-    
+    func videoToLibrary(_ completion: @escaping () -> Void) {
+        self.updateLastImage()
+        bottomContainer.pickerButton.isEnabled = true
+        completion()
+    }
+
     func cameraNotAvailable() {
         topView.flashButton.isHidden = true
         topView.rotateCamera.isHidden = true
@@ -482,32 +470,44 @@ extension ImagePickerController: TopViewDelegate {
 }
 
 extension ImagePickerController {
-    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        let isPortrait = size.height > size.width
-//        updateUI(isPortrait: isPortrait)
+    
+    func tryStopRecording(_ completion: @escaping () -> Void) {
+        if (self.lastSwipeIndex == 0 && self.isRecordingVideo) {
+            self.isRecordingVideo = false
+            self.bottomContainer.pickerVideoButton.recording = self.isRecordingVideo
+            self.endRecording {
+                completion()
+            }
+            return
+        }
+        completion()
     }
     
-//    private func updateUI(isPortrait:Bool) {
-//        self.bottomContainer.alpha = isPortrait ? 0 : 1
-//        self.topView.alpha = isPortrait ? 0 : 1
-//        self.overlayRotateYourPhoneView.alpha = isPortrait ? 1 : 0
-//        self.overlayRotateYourPhoneView.isHidden = !isPortrait
-//    }
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+            super.viewWillTransition(to: size, with: coordinator)
+//        let isPortrait = size.height > size.width
+            tryStopRecording{}
+        coordinator.animate(alongsideTransition: { (context) in
+            // Small lag on camera mode change.
+            self.bottomContainer.swipeMenuView.selectItemAtIndex(index: self.lastSwipeIndex)
+        }, completion: nil)
+    }
 }
 
 extension ImagePickerController : iOSSwipeOptionsDelegate {
     
     func didSwipeToItem(_ item: String, index: Int) {
-        // TODO: Stop taking video
-//        print("\(index): \(item)")
-        bottomContainer.pickerButton.isHidden = index == 0
-        bottomContainer.pickerVideoButton.isHidden = index == 1
-        cameraController.switchCameraMode()
-//        var index = currentCameraModeIndex.rawValue
-//        index += 1
-//        index = index % cameraModeTitles.count
-//        bottomContainer.delegate?.switchCameraModeDidPress()
+        
+        guard (lastSwipeIndex != index) else { return }
+        tryStopRecording {
+            self.cameraController.switchCameraMode()
+        }
+        lastSwipeIndex = index
+        let isPickingPhoto = index == 0
+        bottomContainer.pickerButton.isHidden = isPickingPhoto
+        bottomContainer.pickerVideoButton.isHidden = !isPickingPhoto
+        vTopPanel.isHidden = !isPickingPhoto
+        
     }
     
 }

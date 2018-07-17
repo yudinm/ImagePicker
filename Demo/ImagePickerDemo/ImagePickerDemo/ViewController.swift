@@ -1,7 +1,6 @@
 
 import UIKit
 import ImagePicker
-import Lightbox
 import AVKit
 import Photos
 
@@ -100,32 +99,32 @@ class ViewController: UIViewController, ImagePickerDelegate {
     
     func wrapperDidPress(_ imagePicker: ImagePickerController, allMediaItems: [PHAsset], capturedMediaItems: inout [PHAsset]) {
         guard allMediaItems.count > 0 else { return }
-        
-        var lightboxImages = [LightboxImage]()
-        var index = 0
-        allMediaItems.forEach { asset in
-            let text = asset.creationDate?.description ?? ""
-            asset.getURL { url, preivewImage in
-                if let url = url {
-                    switch asset.mediaType {
-                    case .image:
-                        let lbImage = LightboxImage(imageURL: url)
-                        lbImage.text = text
-                        lightboxImages.append(lbImage)
-                    case .video:
-                        lightboxImages.append(LightboxImage(image: preivewImage, text: text, videoURL: url))
-                    default:
-                        print("WTF: \(url)")
-                    }
-                }
-                index += 1
-                if index == allMediaItems.count {
-                    guard lightboxImages.count > 0 else { return }
-                    let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
-                    imagePicker.present(lightbox, animated: true, completion: nil)
-                }
-            }
-        }
+    }
+//        var lightboxImages = [LightboxImage]()
+//        var index = 0
+//        allMediaItems.forEach { asset in
+//            let text = asset.creationDate?.description ?? ""
+//            asset.getURL { url, preivewImage in
+//                if let url = url {
+//                    switch asset.mediaType {
+//                    case .image:
+//                        let lbImage = LightboxImage(imageURL: url)
+//                        lbImage.text = text
+//                        lightboxImages.append(lbImage)
+//                    case .video:
+//                        lightboxImages.append(LightboxImage(image: preivewImage, text: text, videoURL: url))
+//                    default:
+//                        print("WTF: \(url)")
+//                    }
+//                }
+//                index += 1
+//                if index == allMediaItems.count {
+//                    guard lightboxImages.count > 0 else { return }
+//                    let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
+//                    imagePicker.present(lightbox, animated: true, completion: nil)
+//                }
+//            }
+//        }
 
 //        var mediaItems = [Any]()
 //        for asset in allMediaItems {
@@ -172,7 +171,7 @@ class ViewController: UIViewController, ImagePickerDelegate {
         //
         //    let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
         //    imagePicker.present(lightbox, animated: true, completion: nil)
-    }
+//    }
     
     func urlOf(playerItem: AVPlayerItem) -> URL? {
         return ((playerItem.asset) as? AVURLAsset)?.url
@@ -181,6 +180,5 @@ class ViewController: UIViewController, ImagePickerDelegate {
     func doneButtonDidPress(_ imagePicker: ImagePickerController, mediaItems: [PHAsset]) {
         imagePicker.dismiss(animated: true, completion: nil)
     }
-    
 }
 

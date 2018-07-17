@@ -6,7 +6,7 @@ protocol CameraViewDelegate: class {
     
     func setFlashButtonHidden(_ hidden: Bool)
     func imageToLibrary(_ completion: @escaping () -> Void)
-//    func videoToLibrary(_ completion: @escaping () -> Void)
+    func videoToLibrary(_ completion: @escaping () -> Void)
     func cameraNotAvailable()
 //    func switchCameraMode()
 }
@@ -359,5 +359,12 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
         setupPreviewLayer()
         updatePreviewLayerLayout()
     }
+    
+    func cameraManFileOutputFinishRecording(_ cameraMan: CameraMan) {
+        delegate?.videoToLibrary {
+            
+        }
+    }
+    
     
 }

@@ -30,7 +30,7 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     var delegate: iOSSwipeOptionsDelegate!
     
     // private
-    private let swipe_cell_width = 123*0.5 as CGFloat
+    private let swipe_cell_width = 60 as CGFloat
     private var theCollectionView: UICollectionView!
     private var unitIndex: Int = 0
     private var appliedSwipeGestures: Bool = false
@@ -94,6 +94,11 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         if self.theCollectionView == nil {
             
             self.theCollectionView = UICollectionView(frame: f, collectionViewLayout: flowlayout)
+            if #available(iOS 11.0, *) {
+                self.theCollectionView.contentInsetAdjustmentBehavior = .never
+            } else {
+                // Fallback on earlier versions
+            }
             //iOSSwipeItemCell
             self.theCollectionView.register(iOSSwipeItemCell.self, forCellWithReuseIdentifier: "iOSSwipeItemCell")
             self.theCollectionView.allowsMultipleSelection = false
@@ -196,8 +201,11 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         self.unitIndex = indexPath.item
         
         // scroll to content offset
-        let mid = -self.theCollectionView.frame.size.width/2.0
-        let x =  mid + self.swipe_cell_width/2 + CGFloat(self.unitIndex) * self.swipe_cell_width as CGFloat
+//        let currentOffset = self.theCollectionView.contentOffset
+        let size = self.theCollectionView.bounds.size
+        let width = size.width > size.height ? size.width : size.height
+        let mid = -(width * 0.5)
+        let x =  mid + self.swipe_cell_width * 0.5 + CGFloat(self.unitIndex) * self.swipe_cell_width as CGFloat
         let offset = CGPoint(x: x, y: 0)
         self.theCollectionView.setContentOffset(offset, animated: true)
         

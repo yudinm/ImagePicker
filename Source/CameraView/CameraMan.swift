@@ -6,6 +6,7 @@ protocol CameraManDelegate: class {
     func cameraManNotAvailable(_ cameraMan: CameraMan)
     func cameraManDidStart(_ cameraMan: CameraMan)
     func cameraMan(_ cameraMan: CameraMan, didChangeInput input: AVCaptureDeviceInput)
+    func cameraManFileOutputFinishRecording(_ cameraMan: CameraMan)
 }
 
 class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
@@ -267,7 +268,11 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
         queue.async {
             guard let movieFileOutput = self.movieFileOutput else { return }
             movieFileOutput.stopRecording()
-            self.actionStopTakingVideo()
+            if #available(iOS 9.0, *) {
+                AudioServicesPlaySystemSoundWithCompletion(SystemSoundID(1118), nil)
+            } else {
+                AudioServicesPlaySystemSound(1118)
+            }
         }
     }
     
@@ -287,9 +292,8 @@ class CameraMan: NSObject, AVCaptureFileOutputRecordingDelegate {
                 return
             }
             DispatchQueue.main.async {
-//                self.delegate?.videoToLibrary {
-                    self.actionStopTakingVideo()
-//                }
+                self.delegate?.cameraManFileOutputFinishRecording(self)
+                self.actionStopTakingVideo()
             }
         })
     }
