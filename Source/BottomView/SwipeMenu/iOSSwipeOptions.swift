@@ -130,14 +130,14 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         
         var prev = NSNotFound
         if recognizer.direction == .left {
-            //            print("--> left swipe done")
+            print("--> left swipe done")
             if self.unitIndex < (items.count) - 1 {
                 prev = self.unitIndex
                 self.unitIndex += 1
             }
         }
         else if recognizer.direction == .right {
-            //            print("---> right swipe done")
+            print("---> right swipe done")
             if self.unitIndex > 0 {
                 prev = self.unitIndex
                 self.unitIndex -= 1

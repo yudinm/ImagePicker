@@ -46,7 +46,7 @@ extension PHAsset {
 
 }
 
-class ViewController: UIViewController, ImagePickerDelegate {
+class DemoViewController: UIViewController, ImagePickerDelegate {
     
     lazy var button: UIButton = self.makeButton()
     
@@ -97,8 +97,10 @@ class ViewController: UIViewController, ImagePickerDelegate {
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
-    func wrapperDidPress(_ imagePicker: ImagePickerController, allMediaItems: [PHAsset], capturedMediaItems: inout [PHAsset]) {
-        guard allMediaItems.count > 0 else { return }
+    func wrapperDidPress(_ imagePicker: ImagePickerController, capturedMediaItems: inout [PHAsset]) {
+        let galleryContainer = SimpleGalleryContainer.instantinate()
+        galleryContainer.delegate = self
+        imagePicker.present(galleryContainer, animated: true, completion: nil)
     }
 //        var lightboxImages = [LightboxImage]()
 //        var index = 0
@@ -180,5 +182,18 @@ class ViewController: UIViewController, ImagePickerDelegate {
     func doneButtonDidPress(_ imagePicker: ImagePickerController, mediaItems: [PHAsset]) {
         imagePicker.dismiss(animated: true, completion: nil)
     }
+}
+
+extension DemoViewController: SimpleGalleryProtocol {
+    func cancel(_ container: SimpleGalleryContainer) {
+        container.dismiss(animated: true, completion: nil)
+    }
+    
+    func done(_ container: SimpleGalleryContainer, selected: [PHAsset]) {
+        container.dismiss(animated: true, completion: nil)
+        print(selected)
+    }
+    
+    
 }
 

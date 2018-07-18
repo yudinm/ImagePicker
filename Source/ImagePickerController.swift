@@ -4,7 +4,7 @@ import Photos
 
 public protocol ImagePickerDelegate: NSObjectProtocol {
     
-    func wrapperDidPress(_ imagePicker: ImagePickerController, allMediaItems: [PHAsset], capturedMediaItems: inout [PHAsset])
+    func wrapperDidPress(_ imagePicker: ImagePickerController, capturedMediaItems: inout [PHAsset])
     func doneButtonDidPress(_ imagePicker: ImagePickerController, mediaItems: [PHAsset])
     func cancelButtonDidPress(_ imagePicker: ImagePickerController)
 }
@@ -132,8 +132,8 @@ open class ImagePickerController: UIViewController {
         bottomContainer.pickerVideoButton.translatesAutoresizingMaskIntoConstraints = false
         
         vCameraModeContainer.addSubview(bottomContainer.swipeMenuView)
-        bottomContainer.swipeMenuView.swippableView = self.view
         bottomContainer.swipeMenuView.delegate = self
+        bottomContainer.swipeMenuView.swippableView = bottomContainer.swipeMenuView
         
         let rotate = Helper.getTransform(fromDeviceOrientation: .landscapeRight)
         [bottomContainer.swipeMenuView].forEach {
@@ -415,7 +415,7 @@ extension ImagePickerController: BottomContainerViewDelegate {
     
     @objc func btOpenGalleryDidPressed() {
         AssetManager.fetch(withConfiguration: configuration) { assets in
-            self.delegate?.wrapperDidPress(self, allMediaItems: assets, capturedMediaItems: &self.capturedMedia)
+            self.delegate?.wrapperDidPress(self, capturedMediaItems: &self.capturedMedia)
         }
     }
 }
@@ -443,7 +443,7 @@ extension ImagePickerController: CameraViewDelegate {
     }
     
     func videoToLibrary(_ completion: @escaping () -> Void) {
-        self.updateLastImage()
+        updateLastImage()
         bottomContainer.pickerButton.isEnabled = true
         completion()
     }
@@ -484,9 +484,9 @@ extension ImagePickerController {
     }
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-            super.viewWillTransition(to: size, with: coordinator)
+        super.viewWillTransition(to: size, with: coordinator)
 //        let isPortrait = size.height > size.width
-            tryStopRecording{}
+        tryStopRecording{}
         coordinator.animate(alongsideTransition: { (context) in
             // Small lag on camera mode change.
             self.bottomContainer.swipeMenuView.selectItemAtIndex(index: self.lastSwipeIndex)
@@ -497,7 +497,7 @@ extension ImagePickerController {
 extension ImagePickerController : iOSSwipeOptionsDelegate {
     
     func didSwipeToItem(_ item: String, index: Int) {
-        
+        // TODO: Fix start on portrait
         guard (lastSwipeIndex != index) else { return }
         tryStopRecording {
             self.cameraController.switchCameraMode()
