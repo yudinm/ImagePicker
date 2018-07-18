@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wnq-As-rwq">
-    <device id="retina5_9" orientation="landscape">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,14 +15,14 @@
             <objects>
                 <viewController storyboardIdentifier="ImagePickerController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wnq-As-rwq" customClass="ImagePickerController" customModule="ImagePicker" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="XeR-jN-bdD" userLabel="RootView">
-                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kf2-bH-AUv" userLabel="CameraView">
-                                <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                 <subviews>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EdJ-h9-5hT">
-                                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                         <connections>
                                             <segue destination="q9f-JO-7zr" kind="embed" identifier="embedCameraVC" id="HwL-PI-o3m"/>
                                         </connections>
@@ -108,17 +108,17 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jmO-I0-wDQ" userLabel="OverlayView">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                <rect key="frame" x="-812" y="-812" width="1999" height="2436"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rotateYourPhone.png" translatesAutoresizingMaskIntoConstraints="NO" id="mn4-do-8Pv">
-                                        <rect key="frame" x="157" y="252.66666666666663" width="100" height="100"/>
+                                        <rect key="frame" x="949.66666666666663" y="1102.6666666666667" width="99.999999999999886" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="4XQ-1l-Mv5"/>
                                             <constraint firstAttribute="height" constant="100" id="lTe-fw-B4y"/>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SMF-vE-jjx">
-                                        <rect key="frame" x="91" y="360.66666666666669" width="232" height="100.33333333333331"/>
+                                        <rect key="frame" x="883.66666666666663" y="1210.6666666666667" width="231.99999999999989" height="100.33333333333326"/>
                                         <string key="text">Please rotate your phone
 to landscape mode
 or select content from
@@ -168,16 +168,16 @@ Camera roll</string>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="jmO-I0-wDQ" secondAttribute="bottom" id="8pd-nm-2Kc"/>
+                            <constraint firstAttribute="bottom" secondItem="jmO-I0-wDQ" secondAttribute="bottom" constant="-812" id="8pd-nm-2Kc"/>
                             <constraint firstItem="NWO-U9-Ve9" firstAttribute="centerX" secondItem="XeR-jN-bdD" secondAttribute="centerX" id="9wz-ZE-a9G"/>
                             <constraint firstItem="NWO-U9-Ve9" firstAttribute="top" secondItem="5xt-G1-SUe" secondAttribute="top" constant="16" id="Ftd-dd-giW"/>
                             <constraint firstAttribute="trailing" secondItem="uFJ-HZ-WgP" secondAttribute="trailing" id="W1M-YK-bYB"/>
-                            <constraint firstItem="jmO-I0-wDQ" firstAttribute="leading" secondItem="XeR-jN-bdD" secondAttribute="leading" id="aWT-bs-Use"/>
+                            <constraint firstItem="jmO-I0-wDQ" firstAttribute="leading" secondItem="XeR-jN-bdD" secondAttribute="leading" constant="-812" id="aWT-bs-Use"/>
                             <constraint firstAttribute="bottom" secondItem="uFJ-HZ-WgP" secondAttribute="bottom" id="cJc-Sc-cys"/>
                             <constraint firstItem="kf2-bH-AUv" firstAttribute="top" secondItem="XeR-jN-bdD" secondAttribute="top" id="ddE-hx-D4o"/>
                             <constraint firstItem="kf2-bH-AUv" firstAttribute="leading" secondItem="XeR-jN-bdD" secondAttribute="leading" id="jHc-DD-HEk"/>
-                            <constraint firstAttribute="trailing" secondItem="jmO-I0-wDQ" secondAttribute="trailing" id="kfr-Zt-ZYA"/>
-                            <constraint firstItem="jmO-I0-wDQ" firstAttribute="top" secondItem="XeR-jN-bdD" secondAttribute="top" id="qCx-Zo-PGx"/>
+                            <constraint firstAttribute="trailing" secondItem="jmO-I0-wDQ" secondAttribute="trailing" constant="-812" id="kfr-Zt-ZYA"/>
+                            <constraint firstItem="jmO-I0-wDQ" firstAttribute="top" secondItem="XeR-jN-bdD" secondAttribute="top" constant="-812" id="qCx-Zo-PGx"/>
                             <constraint firstItem="uFJ-HZ-WgP" firstAttribute="top" secondItem="5xt-G1-SUe" secondAttribute="top" id="wSz-Jc-5kz"/>
                             <constraint firstAttribute="trailing" secondItem="kf2-bH-AUv" secondAttribute="trailing" id="yDP-EQ-OGd"/>
                             <constraint firstAttribute="bottom" secondItem="kf2-bH-AUv" secondAttribute="bottom" id="zjo-Vu-p9n"/>
@@ -219,7 +219,7 @@ Camera roll</string>
             <objects>
                 <viewController storyboardIdentifier="CameraView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="q9f-JO-7zr" customClass="CameraView" customModule="ImagePicker" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4NV-5w-rf6">
-                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="0Wj-8t-TBm"/>

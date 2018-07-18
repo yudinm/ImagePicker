@@ -39,7 +39,7 @@ open class ImagePickerController: UIViewController {
         let view = BottomContainerView(configuration: self.configuration)
         view.backgroundColor = self.configuration.bottomContainerColor
         view.delegate = self
-        view.swipeMenuView.swippableView = self.view
+        view.swipeMenuView.swippableView = cameraController.view
         view.swipeMenuView.delegate = self
         return view
         }()
@@ -120,7 +120,7 @@ open class ImagePickerController: UIViewController {
         setupViews()
         setupConstraints()
         setupBinding()
-        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex)
+        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
     }
     
     func setupViews() {
@@ -208,7 +208,6 @@ open class ImagePickerController: UIViewController {
                     self.player.rate = 3.0
                     self.player.isMuted = true
                     self.player.play()
-                    // TODO: CHECK IT!!!
                 }
             }
         }
@@ -227,12 +226,17 @@ open class ImagePickerController: UIViewController {
         }
         
         statusBarHidden = UIApplication.shared.isStatusBarHidden
+        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateLastImage()
-        bottomContainer.swipeMenuView.selectItemAtIndex(index: 0)
+    }
+    
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
     }
     
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -379,9 +383,9 @@ open class ImagePickerController: UIViewController {
     }
     
     fileprivate func endRecording(_ completion: @escaping () -> Void) {
+        self.timer.invalidate()
         self.cameraController.stopTakingVideo {
             self.isTakingPicture = false
-            self.timer.invalidate()
             completion()
         }
     }
@@ -489,7 +493,7 @@ extension ImagePickerController {
         tryStopRecording{}
         coordinator.animate(alongsideTransition: { (context) in
             // Small lag on camera mode change.
-            self.bottomContainer.swipeMenuView.selectItemAtIndex(index: self.lastSwipeIndex)
+            self.bottomContainer.swipeMenuView.selectItemAtIndex(index: self.lastSwipeIndex, animated: true)
         }, completion: nil)
     }
 }

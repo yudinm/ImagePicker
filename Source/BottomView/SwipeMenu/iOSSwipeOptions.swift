@@ -130,14 +130,14 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         
         var prev = NSNotFound
         if recognizer.direction == .left {
-            print("--> left swipe done")
+//            print("--> left swipe done")
             if self.unitIndex < (items.count) - 1 {
                 prev = self.unitIndex
                 self.unitIndex += 1
             }
         }
         else if recognizer.direction == .right {
-            print("---> right swipe done")
+//            print("---> right swipe done")
             if self.unitIndex > 0 {
                 prev = self.unitIndex
                 self.unitIndex -= 1
@@ -146,15 +146,18 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         if prev != NSNotFound {
             self.deselectItemAtIndex(index: prev)
         }
-        self.selectItemAtIndex(index: self.unitIndex)
+        self.selectItemAtIndex(index: self.unitIndex, animated: true)
     }
     
     //MARK: - select item at index
-    func selectItemAtIndex(index: Int) {
+    func selectItemAtIndex(index: Int, animated: Bool) {
         if index < items.count {
             // select default index
             let indexPath = IndexPath(item: index, section: 0)
-            self.collectionView(self.theCollectionView, didSelectItemAt: indexPath)
+            self.collectionView(self.theCollectionView, didSelectItemAt: indexPath, animated: animated)
+        } else {
+            let indexPath = IndexPath(item: 0, section: 0)
+            self.collectionView(self.theCollectionView, didSelectItemAt: indexPath, animated: animated)
         }
     }
     
@@ -182,7 +185,12 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     //MARK: - UICollectionViewDelegate
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.collectionView(collectionView, didSelectItemAt: indexPath, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath, animated: Bool) {
 
         // deselect previous
         self.deselectItemAtIndex(index: self.unitIndex)
@@ -207,7 +215,7 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         let mid = -(width * 0.5)
         let x =  mid + self.swipe_cell_width * 0.5 + CGFloat(self.unitIndex) * self.swipe_cell_width as CGFloat
         let offset = CGPoint(x: x, y: 0)
-        self.theCollectionView.setContentOffset(offset, animated: true)
+        self.theCollectionView.setContentOffset(offset, animated: animated)
         
         // perform delegate
         self.delegate.didSwipeToItem(self.items[indexPath.item], index: indexPath.item)

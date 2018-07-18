@@ -134,8 +134,8 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-//        previewLayer?.connection?.videoOrientation = .portrait
         locationManager?.startUpdatingLocation()
+        updatePreviewLayerLayout()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -172,15 +172,20 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        coordinator.animate(alongsideTransition: { (context) -> Void in
-            self.updatePreviewLayerLayout()
-        }, completion: { (context) -> Void in
-            self.updatePreviewLayerLayout()
-        })
         super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { [weak self] (context) -> Void in
+            DispatchQueue.main.async(execute: {
+                self?.updatePreviewLayerLayout()
+            })
+            }, completion: { [weak self] (context) -> Void in
+            DispatchQueue.main.async(execute: {
+                self?.updatePreviewLayerLayout()
+            })
+        })
     }
     
     func updatePreviewLayerLayout() {
+        guard let previewLayer = previewLayer else { return }
         let captureOriaentation: AVCaptureVideoOrientation =  {
             switch UIDevice.current.orientation {
             case .landscapeLeft:
@@ -199,11 +204,12 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
                 return .portrait
             }
         }()
-        previewLayer.connection?.videoOrientation = captureOriaentation
-        let bounds = view.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
-        previewLayer.bounds = bounds
+        let bounds = self.view.bounds//view.layer.bounds
+        previewLayer.frame = bounds
         previewLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+        previewLayer.connection?.videoOrientation = captureOriaentation
+        previewLayer.removeAllAnimations()
     }
     
     // MARK: - Actions
@@ -361,9 +367,7 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     }
     
     func cameraManFileOutputFinishRecording(_ cameraMan: CameraMan) {
-        delegate?.videoToLibrary {
-            
-        }
+        delegate?.videoToLibrary { }
     }
     
     
