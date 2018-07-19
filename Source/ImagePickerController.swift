@@ -54,7 +54,12 @@ open class ImagePickerController: UIViewController {
         return view
         }()
     
-    var cameraController: CameraView!
+    var cameraController: CameraView! {
+        didSet {
+            cameraController.delegate = self
+            cameraController.startOnFrontCamera = self.startOnFrontCamera
+        }
+    }
     
     lazy var volumeView: MPVolumeView = { [unowned self] in
         let view = MPVolumeView()
@@ -116,8 +121,6 @@ open class ImagePickerController: UIViewController {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-        cameraController.delegate = self
-        cameraController.startOnFrontCamera = self.startOnFrontCamera
 
         setupViews()
         setupBinding()
