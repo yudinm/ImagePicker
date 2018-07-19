@@ -17,7 +17,6 @@ class SwipeMenuView: iOSSwipeOptions {
         
         backgroundColor = UIColor.clear
         setupiOSSwipableView()
-        setupConstraints()
         
     }
     

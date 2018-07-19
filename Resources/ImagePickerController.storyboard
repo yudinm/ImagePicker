@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wnq-As-rwq">
-    <device id="retina5_9" orientation="portrait">
+    <device id="retina5_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,14 +15,14 @@
             <objects>
                 <viewController storyboardIdentifier="ImagePickerController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wnq-As-rwq" customClass="ImagePickerController" customModule="ImagePicker" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="XeR-jN-bdD" userLabel="RootView">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kf2-bH-AUv" userLabel="CameraView">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                                <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                                 <subviews>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EdJ-h9-5hT">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                                         <connections>
                                             <segue destination="q9f-JO-7zr" kind="embed" identifier="embedCameraVC" id="HwL-PI-o3m"/>
                                         </connections>
@@ -40,11 +40,11 @@
                                 <rect key="frame" x="689" y="0.0" width="123" height="375"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x6w-3D-nW6">
-                                        <rect key="frame" x="51.666666666666629" y="16" width="52" height="32"/>
+                                        <rect key="frame" x="43.999999999999993" y="8" width="67.333333333333314" height="36"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="32" id="38u-gc-EVu"/>
+                                            <constraint firstAttribute="height" constant="36" id="38u-gc-EVu"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                                         <state key="normal" title="Cancel">
                                             <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -94,14 +94,16 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.1333333333" green="0.13725490200000001" blue="0.14117647059999999" alpha="0.49638805650684931" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="x6w-3D-nW6" secondAttribute="trailing" priority="998" constant="8" id="074-C6-vAy"/>
                                     <constraint firstAttribute="width" constant="123" id="7N5-vp-Gfb"/>
                                     <constraint firstItem="ZG8-sM-dP5" firstAttribute="centerY" secondItem="uFJ-HZ-WgP" secondAttribute="centerY" id="FDy-vt-qhk"/>
                                     <constraint firstItem="ZG8-sM-dP5" firstAttribute="centerX" secondItem="uFJ-HZ-WgP" secondAttribute="centerX" constant="16" id="HLN-1Z-j3r"/>
                                     <constraint firstAttribute="bottom" secondItem="GRk-4b-EJq" secondAttribute="bottom" id="Hz7-Lt-TVi"/>
                                     <constraint firstItem="GRk-4b-EJq" firstAttribute="leading" secondItem="uFJ-HZ-WgP" secondAttribute="leading" id="IBD-0e-6Tc"/>
                                     <constraint firstItem="iMN-qe-GCt" firstAttribute="centerX" secondItem="ZG8-sM-dP5" secondAttribute="centerX" id="MBN-Rw-8PP"/>
-                                    <constraint firstItem="x6w-3D-nW6" firstAttribute="top" secondItem="uFJ-HZ-WgP" secondAttribute="top" constant="16" id="OzV-aU-MfI"/>
-                                    <constraint firstItem="x6w-3D-nW6" firstAttribute="centerX" secondItem="ZG8-sM-dP5" secondAttribute="centerX" id="UbD-26-2Fj"/>
+                                    <constraint firstItem="x6w-3D-nW6" firstAttribute="top" secondItem="uFJ-HZ-WgP" secondAttribute="top" constant="8" id="OzV-aU-MfI"/>
+                                    <constraint firstItem="x6w-3D-nW6" firstAttribute="centerX" secondItem="ZG8-sM-dP5" secondAttribute="centerX" priority="999" id="UbD-26-2Fj"/>
+                                    <constraint firstItem="x6w-3D-nW6" firstAttribute="leading" secondItem="GRk-4b-EJq" secondAttribute="trailing" id="X4u-cQ-9zA"/>
                                     <constraint firstItem="GRk-4b-EJq" firstAttribute="top" secondItem="uFJ-HZ-WgP" secondAttribute="top" id="eex-mh-KWH"/>
                                     <constraint firstItem="ZG8-sM-dP5" firstAttribute="leading" secondItem="GRk-4b-EJq" secondAttribute="trailing" id="rwI-71-cIF"/>
                                     <constraint firstAttribute="bottom" secondItem="iMN-qe-GCt" secondAttribute="bottom" constant="32" id="xZr-Yt-YdL"/>
@@ -137,19 +139,19 @@ Camera roll</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-U9-Ve9" userLabel="TopPanelView">
-                                <rect key="frame" x="317.66666666666669" y="16" width="177" height="44"/>
+                                <rect key="frame" x="314.66666666666669" y="16" width="183" height="44"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fgf-my-rgD">
-                                        <rect key="frame" x="52" y="6.6666666666666679" width="109" height="31.000000000000004"/>
+                                        <rect key="frame" x="58" y="6.6666666666666696" width="109" height="31.333333333333329"/>
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="26"/>
                                         <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="0.8026273544520548" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cGN-uz-sUB">
-                                        <rect key="frame" x="8" y="4" width="36" height="36"/>
+                                        <rect key="frame" x="8" y="1" width="42" height="42"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="36" id="Xb2-XH-ZWF"/>
-                                            <constraint firstAttribute="width" constant="36" id="yf9-0U-8Ek"/>
+                                            <constraint firstAttribute="height" constant="42" id="Xb2-XH-ZWF"/>
+                                            <constraint firstAttribute="width" constant="42" id="yf9-0U-8Ek"/>
                                         </constraints>
                                         <state key="normal" image="flash.png"/>
                                     </button>
@@ -197,7 +199,7 @@ Camera roll</string>
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="btCancel" destination="x6w-3D-nW6" id="g9u-DL-K9y"/>
+                        <outlet property="btDone" destination="x6w-3D-nW6" id="g9u-DL-K9y"/>
                         <outlet property="btFlashMode" destination="cGN-uz-sUB" id="xND-Cg-nOa"/>
                         <outlet property="btOpenGallery" destination="Jfq-xy-YFN" id="8eY-oU-jX7"/>
                         <outlet property="cameraView" destination="kf2-bH-AUv" id="At5-V5-Php"/>
@@ -219,7 +221,7 @@ Camera roll</string>
             <objects>
                 <viewController storyboardIdentifier="CameraView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="q9f-JO-7zr" customClass="CameraView" customModule="ImagePicker" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4NV-5w-rf6">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="0Wj-8t-TBm"/>

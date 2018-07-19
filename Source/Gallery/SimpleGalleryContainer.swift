@@ -9,23 +9,24 @@
 import UIKit
 import Photos
 
-public protocol SimpleGalleryProtocol {
+public protocol SimpleGalleryDelegate {
     func cancel(_ container:SimpleGalleryContainer)
-    func done(_ container:SimpleGalleryContainer, selected: [PHAsset])
+    func done(_ container:SimpleGalleryContainer, selected: [String])
 }
 
 open class SimpleGalleryContainer: UIViewController {
     
     @IBOutlet weak var doneButton: UIButton!
     var gallery: SimpleGallery!
-    public var delegate: SimpleGalleryProtocol!
+    public var delegate: SimpleGalleryDelegate!
+    public var selectedItems: [String]!
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-        setup(selected: [])
+        setup(selected: selectedItems)
     }
     
-    fileprivate func setup(selected: [PHAsset]) {
+    fileprivate func setup(selected: [String]) {
         guard gallery != nil else { assertionFailure(); return }
         gallery.selected = selected
         gallery.reloadData { gallery in
@@ -36,8 +37,8 @@ open class SimpleGalleryContainer: UIViewController {
     @IBAction func doneButtonDidTapped(_ sender: Any) {
         guard let selectedPaths = gallery.collectionView?.indexPathsForSelectedItems else { return }
         guard let delegate = delegate else { assertionFailure(); return }
-        let selectedMediaItems = selectedPaths.map { ip -> PHAsset in
-            return gallery.mediaItems[ip.row]
+        let selectedMediaItems = selectedPaths.map { ip -> String in
+            return gallery.mediaItems[ip.row].localIdentifier
         }
         delegate.done(self, selected: selectedMediaItems)
         self.dismiss(animated: true, completion: nil)

@@ -12,7 +12,7 @@ import Photos
 open class SimpleGallery: UICollectionViewController {
   
     var mediaItems: [PHAsset] = []
-    var selected: [PHAsset]!
+    public var selected: [String]!
     
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +39,11 @@ extension SimpleGallery {
         let mediaItem = mediaItems[row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YUSimpleGalleryCell", for: indexPath) as! SimpleGalleryCell
         cell.configure(asset: mediaItem)
+        cell.isSelected = selected.contains(mediaItem.localIdentifier)
+        if (selected.contains(mediaItem.localIdentifier)) {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+        }
+
         return cell
     }
 }

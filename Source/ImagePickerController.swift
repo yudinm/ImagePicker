@@ -4,8 +4,8 @@ import Photos
 
 public protocol ImagePickerDelegate: NSObjectProtocol {
     
-    func wrapperDidPress(_ imagePicker: ImagePickerController, capturedMediaItems: inout [PHAsset])
-    func doneButtonDidPress(_ imagePicker: ImagePickerController, mediaItems: [PHAsset])
+    func wrapperDidPress(_ imagePicker: ImagePickerController, capturedMediaItems: [String])
+    func doneButtonDidPress(_ imagePicker: ImagePickerController, mediaItems: [String])
     func cancelButtonDidPress(_ imagePicker: ImagePickerController)
 }
 
@@ -14,7 +14,7 @@ open class ImagePickerController: UIViewController {
     let configuration: Configuration
     
     @IBOutlet weak var cameraView: UIView!
-    @IBOutlet weak var btCancel: UIButton!
+    @IBOutlet weak var btDone: UIButton!
     @IBOutlet weak var vCameraModeContainer: UIView!
     @IBOutlet weak var vPickerButtonContainer: UIView!
     @IBOutlet weak var vLastImageContainer: UIView!
@@ -24,11 +24,21 @@ open class ImagePickerController: UIViewController {
     @IBOutlet weak var vTopPanel: UIView!
     @IBOutlet weak var lblTimeCaptured: UILabel!
     @IBOutlet weak var btFlashMode: UIButton!
-    var capturedMedia: [PHAsset] = []
+    var capturedMedia: [String] = [] {
+        didSet {
+            if (capturedMedia.count > 0) {
+                btDone.setTitle("Done", for: .normal)
+                return
+            }
+            btDone.setTitle("Cancel", for: .normal)
+        }
+    }
     var seconds: TimeInterval = TimeInterval(0)
     var timer = Timer()
     var lastSwipeIndex = 999
-
+    var currentFlashIndex = 0
+    let flashButtonTitles = ["AUTO", "ON", "OFF"]
+    
     struct GestureConstants {
         static let maximumHeight: CGFloat = 200
         static let minimumHeight: CGFloat = 125
@@ -41,14 +51,6 @@ open class ImagePickerController: UIViewController {
         view.delegate = self
         view.swipeMenuView.swippableView = cameraController.view
         view.swipeMenuView.delegate = self
-        return view
-        }()
-    
-    open lazy var topView: TopView = { [unowned self] in
-        let view = TopView(configuration: self.configuration)
-        view.backgroundColor = UIColor.clear //self.configuration.backgroundColor
-        view.delegate = self
-        
         return view
         }()
     
@@ -118,7 +120,6 @@ open class ImagePickerController: UIViewController {
         cameraController.startOnFrontCamera = self.startOnFrontCamera
 
         setupViews()
-        setupConstraints()
         setupBinding()
         bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
     }
@@ -184,10 +185,11 @@ open class ImagePickerController: UIViewController {
                                                               multiplier: 1, constant: 0))
     }
     
-    func updateLastImage() {
+    func updateLastImage(addToCaptured: Bool) {
         vLastImageActivityIndicator.startAnimating()
         AssetManager.fetch(withConfiguration: configuration) { assets in
             guard let lastAsset = assets.first else { return }
+            if addToCaptured { self.capturedMedia.append(lastAsset.localIdentifier) }
             AssetManager.resolveAsset(lastAsset, size: CGSize(width: 48, height: 48), shouldPreferLowRes: self.configuration.useLowResolutionPreviewImage) { mediaItem in
                 self.vLastImageActivityIndicator.stopAnimating()
                 guard mediaItem != nil else { return }
@@ -214,8 +216,12 @@ open class ImagePickerController: UIViewController {
     }
     
     func setupBinding() {
-        btCancel.addTarget(self, action: #selector(cancelButtonDidPress), for: .touchUpInside)
-        btOpenGallery.addTarget(self, action: #selector(btOpenGalleryDidPressed), for: .touchUpInside)
+        btDone.addTarget(self, action: #selector(cancelButtonDidPress), for: .touchUpInside)
+        btOpenGallery.addTarget(self, action: #selector(openGalleryButtonDidPressed), for: .touchUpInside)
+        btFlashMode.addTarget(self, action: #selector(flashButtonDidPress(_:)), for: .touchUpInside)
+        let image = btFlashMode.image(for: .normal)
+        btFlashMode.tintColor = UIColor.white
+        btFlashMode.setImage(image?.withRenderingMode(UIImageRenderingMode.alwaysTemplate), for: .normal)
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -231,12 +237,12 @@ open class ImagePickerController: UIViewController {
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        updateLastImage()
+        updateLastImage(addToCaptured: false)
     }
     
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
+        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: true)
     }
     
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -286,7 +292,6 @@ open class ImagePickerController: UIViewController {
     }
     
     func permissionGranted() {
-        // TODO: add fetch
         enableGestures(true)
     }
     
@@ -334,9 +339,9 @@ open class ImagePickerController: UIViewController {
     func enableGestures(_ enabled: Bool) {
         bottomContainer.pickerButton.isEnabled = enabled
         bottomContainer.pickerVideoButton.isEnabled = enabled
-//        bottomContainer.tapGestureRecognizer.isEnabled = enabled
-        topView.flashButton.isEnabled = enabled
-        topView.rotateCamera.isEnabled = configuration.canRotateCamera
+        bottomContainer.swipeMenuView.isUserInteractionEnabled = enabled
+        btFlashMode.isEnabled = enabled
+//        topView.rotateCamera.isEnabled = configuration.canRotateCamera
     }
     
     fileprivate func isBelowImageLimit() -> Bool {
@@ -346,15 +351,12 @@ open class ImagePickerController: UIViewController {
     fileprivate func takePicture() {
         guard isBelowImageLimit() && !isTakingPicture else { return }
         isTakingPicture = true
-        let action: () -> Void = { [weak self] in
-            guard let `self` = self else { return }
-            self.cameraController.takePicture {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
-                    self.isTakingPicture = false
-                })
-            }
+        enableGestures(false)
+        self.cameraController.takePicture {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
+            self.isTakingPicture = false
+//            })
         }
-        action()
     }
     
     fileprivate func startRecording() {
@@ -384,6 +386,7 @@ open class ImagePickerController: UIViewController {
     
     fileprivate func endRecording(_ completion: @escaping () -> Void) {
         self.timer.invalidate()
+        enableGestures(false)
         self.cameraController.stopTakingVideo {
             self.isTakingPicture = false
             completion()
@@ -417,10 +420,8 @@ extension ImagePickerController: BottomContainerViewDelegate {
         delegate?.cancelButtonDidPress(self)
     }
     
-    @objc func btOpenGalleryDidPressed() {
-        AssetManager.fetch(withConfiguration: configuration) { assets in
-            self.delegate?.wrapperDidPress(self, capturedMediaItems: &self.capturedMedia)
-        }
+    @objc func openGalleryButtonDidPressed() {
+        delegate?.wrapperDidPress(self, capturedMediaItems: self.capturedMedia)
     }
 }
 
@@ -428,49 +429,72 @@ extension ImagePickerController: CameraViewDelegate {
     
     func setFlashButtonHidden(_ hidden: Bool) {
         if configuration.flashButtonAlwaysHidden {
-            topView.flashButton.isHidden = hidden
+//            topView.flashButton.isHidden = hidden
         }
     }
     
     func imageToLibrary(_ completion: @escaping () -> Void) {
-        updateLastImage()
-        bottomContainer.pickerButton.isEnabled = true
+        updateLastImage(addToCaptured: true) // TODO: Fix it right way!
+        enableGestures(true)
         completion()
-//        UIView.animate(withDuration: 0.3, animations: {
-//            self.galleryView.collectionView.transform = CGAffineTransform(translationX: collectionSize.width, y: 0)
-//        }, completion: { _ in
-//            self.galleryView.collectionView.transform = CGAffineTransform.identity
-//            guard self.galleryView.assets.count > 0 else { return }
-//            self.galleryView.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
-//            completion()
-//        })
     }
     
     func videoToLibrary(_ completion: @escaping () -> Void) {
-        updateLastImage()
-        bottomContainer.pickerButton.isEnabled = true
+        updateLastImage(addToCaptured: true)
+        enableGestures(true)
         completion()
     }
 
     func cameraNotAvailable() {
-        topView.flashButton.isHidden = true
-        topView.rotateCamera.isHidden = true
-        bottomContainer.pickerButton.isEnabled = false
+        btFlashMode.isHidden = true
+//        topView.rotateCamera.isHidden = true
+        enableGestures(false)
     }
     
 }
 
 // MARK: - TopView delegate methods
 
-extension ImagePickerController: TopViewDelegate {
-    
-    func flashButtonDidPress(_ title: String) {
-        cameraController.flashCamera(title)
+extension ImagePickerController {
+
+    @objc func flashButtonDidPress(_ button: UIButton) {
+        currentFlashIndex += 1
+        currentFlashIndex = currentFlashIndex % flashButtonTitles.count
+        
+        switch currentFlashIndex {
+        case 1:
+            button.tintColor = UIColor(red: 0.98, green: 0.98, blue: 0.45, alpha: 1)
+
+        case 2:
+            button.tintColor = UIColor.lightGray
+
+        default:
+            button.tintColor = UIColor.white
+        }
+        
+        let newTitle = flashButtonTitles[currentFlashIndex]
+        updateFlashButtonLabel()
+        button.accessibilityLabel = "Flash mode is \(newTitle)"
+        cameraController.flashCamera(newTitle)
     }
     
-    func rotateDeviceDidPress() {
-        cameraController.rotateCamera()
+    func updateFlashButtonLabel() {
+        
+        if (lastSwipeIndex == 1) {
+            let newTitle = flashButtonTitles[currentFlashIndex]
+            lblTimeCaptured.text = newTitle
+            lblTimeCaptured.font = UIFont.systemFont(ofSize: 18)
+            return
+        }
+        lblTimeCaptured.text = timeString(time: seconds)
+        lblTimeCaptured.font = UIFont.systemFont(ofSize: 26)
     }
+//
+//    func rotateDeviceDidPress() {
+//        cameraController.rotateCamera()
+//    }
+    
+    
 }
 
 extension ImagePickerController {
@@ -501,7 +525,7 @@ extension ImagePickerController {
 extension ImagePickerController : iOSSwipeOptionsDelegate {
     
     func didSwipeToItem(_ item: String, index: Int) {
-        // TODO: Fix start on portrait
+
         guard (lastSwipeIndex != index) else { return }
         tryStopRecording {
             self.cameraController.switchCameraMode()
@@ -510,8 +534,24 @@ extension ImagePickerController : iOSSwipeOptionsDelegate {
         let isPickingPhoto = index == 0
         bottomContainer.pickerButton.isHidden = isPickingPhoto
         bottomContainer.pickerVideoButton.isHidden = !isPickingPhoto
-        vTopPanel.isHidden = !isPickingPhoto
+//        vTopPanel.isHidden = !isPickingPhoto
+        updateFlashButtonLabel()
         
+    }
+    
+}
+
+
+extension ImagePickerController: SimpleGalleryDelegate {
+    
+    public func cancel(_ container: SimpleGalleryContainer) {
+        container.dismiss(animated: true, completion: nil)
+    }
+    
+    public func done(_ container: SimpleGalleryContainer, selected: [String]) {
+        container.dismiss(animated: true, completion: nil)
+        self.capturedMedia = selected
+        print(selected)
     }
     
 }
