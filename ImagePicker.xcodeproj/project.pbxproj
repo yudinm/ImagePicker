@@ -28,8 +28,8 @@
 		5E8F6F562100D21B003DEA5D /* SimpleGalleryContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F522100D21B003DEA5D /* SimpleGalleryContainer.swift */; };
 		5E8F6F572100D21B003DEA5D /* SimpleGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F532100D21B003DEA5D /* SimpleGallery.swift */; };
 		5E8F6F5C2100D22D003DEA5D /* SwipeMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F592100D22D003DEA5D /* SwipeMenuView.swift */; };
-		5E8F6F5D2100D22D003DEA5D /* iOSSwipeOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F5A2100D22D003DEA5D /* iOSSwipeOptions.swift */; };
-		5E8F6F5E2100D22D003DEA5D /* iOSSwipeItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F5B2100D22D003DEA5D /* iOSSwipeItemCell.swift */; };
+		5E8F6F5D2100D22D003DEA5D /* SwipeOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F5A2100D22D003DEA5D /* SwipeOptions.swift */; };
+		5E8F6F5E2100D22D003DEA5D /* SwipeItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8F6F5B2100D22D003DEA5D /* SwipeItemCell.swift */; };
 		5EF0C324207E1F180091842B /* ButtonVideoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF0C323207E1F180091842B /* ButtonVideoPicker.swift */; };
 		D20FF6361CD23426000F3BFE /* CameraMan.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20FF6351CD23426000F3BFE /* CameraMan.swift */; };
 		D25A8C2E1D4768250008D2F7 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25A8C2D1D4768250008D2F7 /* Helper.swift */; };
@@ -81,8 +81,8 @@
 		5E8F6F522100D21B003DEA5D /* SimpleGalleryContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleGalleryContainer.swift; sourceTree = "<group>"; };
 		5E8F6F532100D21B003DEA5D /* SimpleGallery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleGallery.swift; sourceTree = "<group>"; };
 		5E8F6F592100D22D003DEA5D /* SwipeMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeMenuView.swift; sourceTree = "<group>"; };
-		5E8F6F5A2100D22D003DEA5D /* iOSSwipeOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSSwipeOptions.swift; sourceTree = "<group>"; };
-		5E8F6F5B2100D22D003DEA5D /* iOSSwipeItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSSwipeItemCell.swift; sourceTree = "<group>"; };
+		5E8F6F5A2100D22D003DEA5D /* SwipeOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeOptions.swift; sourceTree = "<group>"; };
+		5E8F6F5B2100D22D003DEA5D /* SwipeItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeItemCell.swift; sourceTree = "<group>"; };
 		5EF0C323207E1F180091842B /* ButtonVideoPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonVideoPicker.swift; sourceTree = "<group>"; };
 		D20FF6351CD23426000F3BFE /* CameraMan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraMan.swift; sourceTree = "<group>"; };
 		D25A8C2D1D4768250008D2F7 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
@@ -138,8 +138,8 @@
 			isa = PBXGroup;
 			children = (
 				5E8F6F592100D22D003DEA5D /* SwipeMenuView.swift */,
-				5E8F6F5A2100D22D003DEA5D /* iOSSwipeOptions.swift */,
-				5E8F6F5B2100D22D003DEA5D /* iOSSwipeItemCell.swift */,
+				5E8F6F5A2100D22D003DEA5D /* SwipeOptions.swift */,
+				5E8F6F5B2100D22D003DEA5D /* SwipeItemCell.swift */,
 			);
 			path = SwipeMenu;
 			sourceTree = "<group>";
@@ -394,8 +394,8 @@
 			files = (
 				5E8F6F542100D21B003DEA5D /* SimpleGalleryCell.swift in Sources */,
 				39E3C3311CAFD79200340DAD /* LocationManager.swift in Sources */,
-				5E8F6F5D2100D22D003DEA5D /* iOSSwipeOptions.swift in Sources */,
-				5E8F6F5E2100D22D003DEA5D /* iOSSwipeItemCell.swift in Sources */,
+				5E8F6F5D2100D22D003DEA5D /* SwipeOptions.swift in Sources */,
+				5E8F6F5E2100D22D003DEA5D /* SwipeItemCell.swift in Sources */,
 				D5DC59C81C201CC4003BD79B /* ConstraintsSetup.swift in Sources */,
 				D5DC59C71C201CC4003BD79B /* Configuration.swift in Sources */,
 				5E8F6F572100D21B003DEA5D /* SimpleGallery.swift in Sources */,
