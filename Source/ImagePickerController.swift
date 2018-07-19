@@ -522,7 +522,7 @@ extension ImagePickerController {
     }
 }
 
-extension ImagePickerController : iOSSwipeOptionsDelegate {
+extension ImagePickerController : SwipeOptionsDelegate {
     
     func didSwipeToItem(_ item: String, index: Int) {
 

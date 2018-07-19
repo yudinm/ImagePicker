@@ -1,5 +1,5 @@
 //
-//  iOSSwipeOptions.swift
+//  SwipeOptions.swift
 //  ios-camera-swipe-options
 //
 //  Created by Minhaz Panara on 05/09/17.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol iOSSwipeOptionsDelegate {
+protocol SwipeOptionsDelegate {
     func didSwipeToItem(_ item: String, index: Int)
 }
 
-class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class SwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
   
     // params
     var items: Array<String> = []
@@ -27,10 +27,10 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
             appliedSwipeGestures = true
         }
     }
-    var delegate: iOSSwipeOptionsDelegate!
+    var delegate: SwipeOptionsDelegate!
     
     // private
-    private let swipe_cell_width = 60 as CGFloat
+    private let swipeCellWidth = 60 as CGFloat
     private var theCollectionView: UICollectionView!
     private var unitIndex: Int = 0
     private var appliedSwipeGestures: Bool = false
@@ -90,17 +90,17 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         flowlayout.minimumInteritemSpacing = 5.0
         
         // collection view
-        let f = CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height)
+        let frame = CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height)
         if self.theCollectionView == nil {
             
-            self.theCollectionView = UICollectionView(frame: f, collectionViewLayout: flowlayout)
+            self.theCollectionView = UICollectionView(frame: frame, collectionViewLayout: flowlayout)
             if #available(iOS 11.0, *) {
                 self.theCollectionView.contentInsetAdjustmentBehavior = .never
             } else {
                 // Fallback on earlier versions
             }
-            //iOSSwipeItemCell
-            self.theCollectionView.register(iOSSwipeItemCell.self, forCellWithReuseIdentifier: "iOSSwipeItemCell")
+            //SwipeItemCell
+            self.theCollectionView.register(SwipeItemCell.self, forCellWithReuseIdentifier: "iOSSwipeItemCell")
             self.theCollectionView.allowsMultipleSelection = false
             theCollectionView.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(self.theCollectionView)
@@ -112,7 +112,7 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
             }
             
         } else {
-            self.theCollectionView.frame = f
+            self.theCollectionView.frame = frame
             self.theCollectionView.collectionViewLayout = flowlayout
         }
         
@@ -174,14 +174,14 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "iOSSwipeItemCell", for: indexPath) as! iOSSwipeItemCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "iOSSwipeItemCell", for: indexPath) as! SwipeItemCell
         cell.setText(self.items[indexPath.item])
         return cell
     }
     
     //MARK: - UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: swipe_cell_width, height: 20)
+        return CGSize(width: swipeCellWidth, height: 20)
     }
     
     //MARK: - UICollectionViewDelegate
@@ -196,13 +196,13 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         self.deselectItemAtIndex(index: self.unitIndex)
         
         // all selected items
-        let sel_itms = collectionView.indexPathsForSelectedItems
-        for itm in sel_itms! {
+        let selectedItems = collectionView.indexPathsForSelectedItems
+        for itm in selectedItems! {
             self.deselectItemAtIndex(index: itm.item)
         }
         
         // select current
-        guard let cell = collectionView.cellForItem(at: indexPath) as? iOSSwipeItemCell else {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SwipeItemCell else {
             return
         }
         cell.cellSelect()
@@ -213,7 +213,7 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         let size = self.theCollectionView.bounds.size
         let width = size.width > size.height ? size.width : size.height
         let mid = -(width * 0.5)
-        let x =  mid + self.swipe_cell_width * 0.5 + CGFloat(self.unitIndex) * self.swipe_cell_width as CGFloat
+        let x =  mid + self.swipeCellWidth * 0.5 + CGFloat(self.unitIndex) * self.swipeCellWidth as CGFloat
         let offset = CGPoint(x: x, y: 0)
         self.theCollectionView.setContentOffset(offset, animated: animated)
         
@@ -223,7 +223,7 @@ class iOSSwipeOptions: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
 
-        guard let cell = collectionView.cellForItem(at: indexPath) as? iOSSwipeItemCell else {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SwipeItemCell else {
             return
         }
         cell.cellDeselect()

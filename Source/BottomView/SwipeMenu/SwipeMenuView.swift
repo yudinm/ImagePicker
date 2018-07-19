@@ -9,7 +9,7 @@
 
 import UIKit
 
-class SwipeMenuView: iOSSwipeOptions {
+class SwipeMenuView: SwipeOptions {
 
     
     init() {

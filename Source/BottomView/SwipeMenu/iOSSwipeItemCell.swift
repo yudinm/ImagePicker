@@ -1,5 +1,5 @@
 //
-//  iOSSwipeItemCell.swift
+//  SwipeItemCell.swift
 //  ios-camera-swipe-options
 //
 //  Created by Minhaz Panara on 05/09/17.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class iOSSwipeItemCell: UICollectionViewCell {
+class SwipeItemCell: UICollectionViewCell {
     
     var lblTitle: UILabel!
     
