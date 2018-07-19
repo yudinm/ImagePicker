@@ -58,6 +58,10 @@ open class ImagePickerController: UIViewController {
         didSet {
             cameraController.delegate = self
             cameraController.startOnFrontCamera = self.startOnFrontCamera
+            
+            setupViews()
+            setupBinding()
+            bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
         }
     }
     
@@ -121,10 +125,6 @@ open class ImagePickerController: UIViewController {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupViews()
-        setupBinding()
-        bottomContainer.swipeMenuView.selectItemAtIndex(index: lastSwipeIndex, animated: false)
     }
     
     func setupViews() {
